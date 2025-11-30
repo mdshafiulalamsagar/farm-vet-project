@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>প্রোফাইল আপডেট - ফার্ম ভেট</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="profile.css">
+</head>
+
+<body>
+    <div class="profile-container">
+
+        <div class="back-button-container">
+            <button class="back-button" id="backToHomeButton">
+                <i class="fas fa-arrow-left"></i> হোমপেজে ফিরে যান
+            </button>
+        </div>
+
+        <h2 class="profile-header">আমার প্রোফাইল</h2>
+
+        <form id="profileUpdateForm">
+            <div class="form-group">
+                <label for="name">নাম:</label>
+                <input type="text" id="name" name="name" value="" placeholder="আপনার সম্পূর্ণ নাম" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">ফোন নম্বর:</label>
+                <input type="text" id="phone" name="phone" value="" placeholder="আপনার ফোন নম্বর" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">ইমেইল:</label>
+                <input type="email" id="email" name="email" value="" placeholder="আপনার ইমেইল ঠিকানা" required>
+            </div>
+
+            <div class="form-group">
+                <label for="current-password">বর্তমান পাসওয়ার্ড:</label>
+                <input type="password" id="current-password" name="current-password"
+                    placeholder="আপনার বর্তমান পাসওয়ার্ড" required>
+            </div>
+
+            <div class="form-group">
+                <label for="new-password">নতুন পাসওয়ার্ড:</label>
+                <input type="password" id="new-password" name="new-password" placeholder="নতুন পাসওয়ার্ড (ঐচ্ছিক)">
+            </div>
+
+            <button type="submit" class="update-button">আপডেট করুন</button>
+        </form>
+    </div>
+
+    <script src="profile.js"></script>
+</body>
+
+</html>

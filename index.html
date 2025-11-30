@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ফার্ম ভেট</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@400;500;700&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+    <div class="loader-overlay" id="loaderOverlay">
+        <span class="loading-text">Loading...</span>
+    </div>
+    <div class="navbar">
+        <div class="navbar-title">ফার্ম ভেট</div>
+    </div>
+
+    <div class="login-container">
+
+        <div class="tab-menu" id="tabMenu">
+            <div id="loginTab" data-tab="login" class="active">লগইন</div>
+            <div id="registerTab" data-tab="register">রেজিস্টার</div>
+            <div id="resetTab" data-tab="reset">রিসেট</div>
+        </div>
+
+        <div id="loginContent" class="tab-content active">
+            <div class="form-group">
+                <label for="loginEmail">ইমেইল</label>
+                <input type="email" id="loginEmail" placeholder="ইমেইল">
+
+                <label for="loginPassword">পাসওয়ার্ড</label>
+                <div class="password-input-container">
+                    <input type="password" id="loginPassword" placeholder="পাসওয়ার্ড">
+                    <span class="eye-icon" onclick="togglePassword('loginPassword', this)">👁️</span>
+                </div>
+
+                <div class="checkbox-area">
+                    <label><input type="checkbox"> মনে রাখুন</label>
+                    <a href="#" onclick="showTab('reset'); return false;" class="secondary-action">পাসওয়ার্ড ভুলে
+                        গেছেন?</a>
+                </div>
+            </div>
+
+            <button class="login-btn" onclick="redirectToDashboard()">লগইন করুন</button>
+
+            <div class="register-text">
+                নতুন? <a href="#" onclick="showTab('register'); return false;" class="secondary-action">রেজিস্টার
+                    করুন</a>
+            </div>
+        </div>
+
+        <div id="registerContent" class="tab-content">
+            <div class="form-group">
+                <label for="registerName">সম্পূর্ণ নাম</label>
+                <input type="text" id="registerName" placeholder="সম্পূর্ণ নাম">
+
+                <label for="registerEmail">ইমেইল</label>
+                <input type="email" id="registerEmail" placeholder="ইমেইল">
+
+                <label for="registerPassword">পাসওয়ার্ড</label>
+                <div class="password-input-container">
+                    <input type="password" id="registerPassword" placeholder="পাসওয়ার্ড">
+                    <span class="eye-icon" onclick="togglePassword('registerPassword', this)">👁️</span>
+                </div>
+            </div>
+
+            <button class="register-btn">রেজিস্টার করুন</button>
+            <a href="#" onclick="showTab('login'); return false;" class="secondary-action">লগইন করুন</a>
+        </div>
+
+        <div id="resetContent" class="tab-content">
+            <div class="form-group">
+                <label for="resetEmail">ইমেইল</label>
+                <input type="email" id="resetEmail" placeholder="ইমেইল">
+            </div>
+
+            <p class="reset-success-message">আপনার ইমেইল একটি রিসেট লিংক পাঠানো হয়েছে!</p>
+
+            <button class="reset-btn">রিসেট করুন</button>
+            <a href="#" onclick="showTab('login'); return false;" class="secondary-action">লগইন এ ফিরুন</a>
+        </div>
+
+    </div>
+
+    <footer>
+        © ২০২৫ ফার্ম ভেট. সর্বস্বত্ব সংরক্ষিত
+    </footer>
+
+
+    <script src="login.js"></script>
+</body>
+
+</html>

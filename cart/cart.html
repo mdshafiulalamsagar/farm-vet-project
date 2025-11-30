@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>আপনার কার্ট</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" href="cart.css">
+
+</head>
+
+<body>
+    <div class="loader-overlay" id="loaderOverlay">
+        <span class="loading-text">লোড হচ্ছে...</span>
+    </div>
+
+    <header class="header">
+        <h1 class="logo">ফার্ম ভেট</h1>
+        <div class="search-container">
+        </div>
+        <div class="user-icons">
+            <div class="icon-wrapper">
+                <i class="fas fa-home icon" id="home-icon"></i>
+            </div>
+        </div>
+    </header>
+
+    <div class="cart-container">
+        <h1 class="cart-title">আপনার কার্ট</h1>
+
+        <div class="cart-list" id="cartList">
+        </div>
+
+        <div class="cart-summary" id="cartSummary" style="display: none;">
+            <div class="cart-total">মোট: <span id="cartTotal">৳ 0</span></div>
+            <button class="checkout-btn">চেকআউট করুন</button>
+        </div>
+
+        <div class="empty-cart-message" id="emptyCartMessage" style="display: none;">
+            আপনার কার্ট খালি।
+        </div>
+
+        <div class="back-btn-container">
+            <button class="back-btn" id="backButton">
+                <i class="fas fa-arrow-left"></i>
+                এক ধাপ পিছনে
+            </button>
+        </div>
+    </div>
+
+    <footer>
+        © ২০২৫ ফার্ম ভেট. সর্বস্বত্ব সংরক্ষিত
+    </footer>
+
+    <script src="cart.js"></script>
+</body>
+
+</html>

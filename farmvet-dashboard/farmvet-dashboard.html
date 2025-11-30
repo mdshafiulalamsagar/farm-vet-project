@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ড্যাশবোর্ড - ফার্ম ভেট</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="farmvet-dashboard.css">
+</head>
+
+<body>
+    <div class="loader-overlay" id="loaderOverlay">
+        <span class="loading-text">লোড হচ্ছে...</span>
+    </div>
+
+    <div id="content">
+        <header class="header">
+            <a href="#" class="logo">ফার্ম ভেট</a>
+
+            <div class="header-icons">
+                <a href="#" id="home-icon" style="color: white;"><i class="fas fa-home icon" title="হোমপেজ"></i></a>
+            </div>
+        </header>
+
+        <div class="main-container">
+            <h1 class="dashboard-title">ড্যাশবোর্ড</h1>
+
+            <div class="dashboard-layout">
+                <aside class="sidebar">
+                    <ul class="nav-list">
+                        <li class="active">
+                            <a href="#"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fas fa-file-invoice"></i> আমার অর্ডার</a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fas fa-user-md"></i> ডাক্তার বুকিং</a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fas fa-user-edit"></i> প্রোফাইল এডিট</a>
+                        </li>
+                        <li class="logout">
+                            <a href="#"><i class="fas fa-sign-out-alt"></i> লগ আউট</a>
+                        </li>
+                    </ul>
+                </aside>
+
+                <section class="content-grid">
+                    <div class="status-card card-complete">
+                        <div class="card-icon">৬</div>
+                        <h3 class="card-title">মোট অর্ডার</h3>
+                    </div>
+
+                    <div class="status-card card-pending">
+                        <div class="card-icon">২</div>
+                        <h3 class="card-title">পেন্ডিং অর্ডার</h3>
+                    </div>
+
+                    <div class="status-card card-cancelled">
+                        <div class="card-icon">১</div>
+                        <h3 class="card-title">সম্পন্ন অর্ডার</h3>
+                    </div>
+
+                    <div class="status-card card-doctor">
+                        <div class="card-icon"><i class="fas fa-calendar-check"></i></div>
+                        <h3 class="card-title">ডাক্তার বুকিং</h3>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script src="farmvet-dashboard.js"></script>
+</body>
+
+</html>

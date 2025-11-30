@@ -1,0 +1,277 @@
+/* ---------------- CSS ভেরিয়েবলস (রঙের কোড) ---------------- */
+        :root {
+            --primary-purple: #4a148c; /* মূল বেগুনি রং (হেডার, ফোকাস) */
+            --light-purple: #8e24aa; /* হালকা বেগুনি */
+            --main-bg: #f4f4f4; /* প্রধান পটভূমির রং */
+            --color-green-light: #e8f5e9;
+            --color-green-dark: #388e3c;
+            --color-yellow-light: #fffde7;
+            --color-yellow-dark: #ffb300;
+            --color-orange-light: #fff3e0;
+            --color-orange-dark: #ff8f00;
+            --text-dark: #333;
+        }
+
+        /* ---------------- ১. লোডিং স্ক্রিনের স্টাইল (পরিবর্তিত) ---------------- */
+        
+        /* #loading-screen স্টাইলটি অপ্রয়োজনীয়, তাই তা রিমুভ করা হয়েছে */
+
+        #content {
+            /* শুরুতে কন্টেন্ট লুকানো থাকবে এবং পরে জাভাস্ক্রিপ্ট দ্বারা দৃশ্যমান করা হবে */
+            display: none; 
+        }
+        
+        /* --- নতুন: হোমপেজের স্টাইল অনুসরণ করে লোডার ওভারলে --- */
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            /* প্রাথমিক লোডিং-এর জন্য ডিফল্টভাবে 'flex' থাকবে এবং পেজ লোড হলে 'none' হবে */
+            display: flex; 
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 1; /* ডিফল্টভাবে দৃশ্যমান */
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-text {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--primary-purple);
+            padding: 15px 30px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* ---------------- ২. সাধারণ বডি স্টাইল ---------------- */
+        body {
+            font-family: "Baloo Da 2", sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--main-bg);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* ---------------- হেডার/টপ বার স্টাইল ---------------- */
+        .header {
+            background-color: var(--primary-purple);
+            color: white;
+            padding: 10px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header .logo {
+            font-size: 1.8em;
+            font-weight: 700;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .header-icons {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .header-icons .icon {
+            font-size: 1.8em;
+            cursor: pointer;
+            position: relative;
+        }
+
+        /* ---------------- মূল ড্যাশবোর্ড কন্টেইনার স্টাইল ---------------- */
+        .main-container {
+            padding: 20px 40px;
+        }
+
+        .dashboard-title {
+            text-align: center;
+            font-size: 2.2em;
+            font-weight: 700;
+            color: var(--primary-purple);
+            margin: 30px 0 40px;
+        }
+
+        .dashboard-layout {
+            display: flex;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ---------------- সাইডবার নেভিগেশন স্টাইল ---------------- */
+        .sidebar {
+            flex-basis: 280px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px 0;
+            height: fit-content;
+        }
+        
+        .nav-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-list a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 30px;
+            text-decoration: none;
+            color: var(--text-dark);
+            font-size: 1.1em;
+            font-weight: 500;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .nav-list a i {
+            font-size: 1.1em;
+            color: #777;
+        }
+
+        .nav-list a:hover {
+            background-color: #f0ebf8;
+            color: var(--primary-purple);
+        }
+
+        .nav-list .active a {
+            background-color: #f0ebf8;
+            color: var(--primary-purple);
+            font-weight: 700;
+            border-right: 4px solid var(--primary-purple);
+        }
+        
+        .nav-list .active a i {
+            color: var(--primary-purple);
+        }
+        
+        .nav-list .logout a {
+            color: #d32f2f;
+            margin-top: 15px;
+        }
+        .nav-list .logout a i {
+            color: #d32f2f;
+        }
+        .nav-list .logout a:hover {
+            background-color: #ffebee;
+        }
+
+        /* ---------------- কার্ডস/কন্টেন্ট গ্রিড স্টাইল ---------------- */
+        .content-grid {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            align-content: start;
+        }
+
+        .status-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 150px;
+        }
+        
+        .status-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-icon {
+            font-size: 4em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            line-height: 1;
+        }
+
+        .card-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        /* কার্ডের প্রকারভেদ অনুযায়ী স্টাইল */
+        .card-complete { 
+            background-color: var(--color-green-light);
+        }
+        .card-complete .card-icon {
+            color: var(--color-green-dark);
+        }
+        .card-complete .card-title {
+            color: var(--color-green-dark);
+        }
+
+        .card-pending {
+            background-color: var(--color-yellow-light);
+        }
+        .card-pending .card-icon {
+            color: var(--color-yellow-dark);
+        }
+        .card-pending .card-title {
+            color: var(--color-yellow-dark);
+        }
+
+        .card-cancelled {
+            background-color: var(--color-orange-light);
+        }
+        .card-cancelled .card-icon {
+            color: var(--color-orange-dark);
+        }
+        .card-cancelled .card-title {
+            color: var(--color-orange-dark);
+        }
+        
+        .card-doctor {
+             background-color: var(--color-green-light);
+        }
+        .card-doctor .card-icon {
+             font-size: 3.5em;
+             color: var(--color-green-dark);
+        }
+        .card-doctor .card-title {
+            color: var(--color-green-dark);
+        }
+        
+        /* রেসপনসিভনেস (Responsive Design) এর জন্য মিডিয়া কোয়েরি */
+        @media (max-width: 1024px) {
+            .dashboard-layout {
+                flex-direction: column;
+                align-items: center;
+            }
+            .sidebar {
+                width: 100%;
+                max-width: 500px;
+            }
+            .content-grid {
+                grid-template-columns: 1fr 1fr;
+                width: 100%;
+            }
+        }
+        @media (max-width: 600px) {
+            .header {
+                padding: 10px 20px;
+            }
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }

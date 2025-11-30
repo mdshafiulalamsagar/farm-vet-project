@@ -1,0 +1,243 @@
+/* ---------------- CSS ভেরিয়েবলস: রংগুলি নির্ধারণ করা হয়েছে ---------------- */
+:root {
+  --primary-purple: #4a148c; /* গাঢ় বেগুনি (হেডার ও মূল থিম) */
+  --secondary-purple: #8e24aa; /* অপেক্ষাকৃত হালকা বেগুনি (বুক বাটন) */
+  --primary-green: #4caf50; /* সবুজ বাটন (অর্ডার বাটন) */
+  --dark-green: #1b5e20; /* গাঢ় সবুজ (বাটনের শ্যাডো) */
+  --light-bg: #f4f4f4; /* হালকা ধূসর ব্যাকগ্রাউন্ড */
+  --text-dark: #333; /* গাঢ় টেক্সট */
+  --text-medium: #666; /* মাঝারি গাঢ় টেক্সট */
+}
+
+/* ---------------- লোডিং স্ক্রিন স্টাইল ---------------- */
+.loader-overlay {
+  /* পেজের উপরে স্থির থাকবে এবং পুরো স্ক্রিন কভার করবে */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.9); /* হালকা সাদা ব্যাকগ্রাউন্ড */
+  display: flex; /* কন্টেন্টকে মাঝখানে আনতে */
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* সবথেকে উপরে থাকবে */
+  transition: opacity 0.3s ease; /* মসৃণভাবে অদৃশ্য হওয়ার জন্য */
+}
+
+.loading-text {
+  /* লোডিং লেখাটির স্টাইল */
+  font-size: 1.5em;
+  font-weight: 700;
+  color: var(--primary-purple);
+  padding: 15px 30px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ---------------- সাধারণ বডি স্টাইল ---------------- */
+body {
+  font-family: "Baloo Da 2", sans-serif; /* বাংলা ফন্ট প্রয়োগ */
+  margin: 0;
+  padding: 0;
+  background-color: var(--light-bg);
+  color: var(--text-dark);
+}
+
+/* ---------------- হেডার (Top Bar) স্টাইল ---------------- */
+.top-bar {
+  background-color: var(--primary-purple);
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* লোগো ও আইকনের মধ্যে দূরত্ব */
+}
+
+.logo {
+  font-size: 1.5em;
+  font-weight: 600;
+}
+
+.header-icons {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.notification-icon,
+.cart-icon,
+.profile-icon {
+  font-size: 1.2em;
+  cursor: pointer;
+  position: relative;
+}
+
+/* কার্ট ব্যাজ (আইকনের উপরের ছোট সংখ্যা) */
+.cart-icon span {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #ff5722; /* লাল/কমলা রং */
+  font-size: 0.7em;
+  padding: 2px 5px;
+  border-radius: 50%;
+  display: none; /* জাভাস্ক্রিপ্ট দিয়ে আইটেম সংখ্যা অনুযায়ী দৃশ্যমান হবে */
+}
+
+/* ---------------- মূল কন্টেন্ট ও ব্যানার ---------------- */
+.main-content {
+  padding: 20px 80px;
+}
+
+.banner-section {
+  /* ব্যানার স্টাইল */
+  background: linear-gradient(
+    135deg,
+    #fceabb 0%,
+    #f8b500 100%
+  ); /* হলুদ গ্রেডিয়েন্ট */
+  border-radius: 12px;
+  text-align: center;
+  padding: 40px 20px;
+  margin-bottom: 40px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+  /* সবুজ থ্রিডি বাটন স্টাইল */
+  display: inline-block;
+  padding: 10px 25px;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(180deg, var(--primary-green) 0%, #2e7d32 100%);
+  color: white;
+  box-shadow: 0 6px 0 var(--dark-green), 0 4px 6px rgba(0, 0, 0, 0.3);
+  border: none;
+}
+
+/* ---------------- পরিষেবা কার্ড (Medicine, Doctor, Dashboard) ---------------- */
+.services-section {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  margin-bottom: 40px;
+}
+
+.service-card {
+  /* কার্ডের সাধারণ স্টাইল */
+  text-align: center;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  cursor: pointer;
+  width: 150px;
+}
+
+.service-card:hover {
+  transform: translateY(-5px); /* হোভার করলে সামান্য উপরে উঠবে */
+}
+
+.service-icon {
+  /* কার্ড আইকনের বৃত্তাকার ব্যাকগ্রাউন্ড */
+  font-size: 2.5em;
+  color: var(--primary-purple);
+  background-color: #f0ebf8;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+/* ---------------- তালিকা বিভাগ (ডাক্তার ও ঔষধ) ---------------- */
+.listings-section {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.listing-block {
+  /* তালিকার ব্লক স্টাইল */
+  flex-basis: 45%; /* প্রায় অর্ধেক স্থান নেবে */
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.list-item {
+  /* তালিকার প্রতিটি আইটেমের স্টাইল */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px dotted #ddd;
+}
+.list-item:last-child {
+  border-bottom: none; /* শেষ আইটেমে বর্ডার নেই */
+}
+
+.price {
+  font-weight: 700;
+  color: var(--primary-purple);
+  margin-right: 10px;
+}
+
+.btn-secondary,
+.btn-tertiary {
+  /* সাধারণ বাটন স্টাইল */
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-secondary {
+  /* ডাক্তারদের জন্য বুকিং বাটন (বেগুনি) */
+  background-color: var(--secondary-purple);
+  color: white;
+}
+.btn-secondary:hover {
+  background-color: #7b1fa2;
+}
+
+.btn-tertiary {
+  /* ঔষধের জন্য অর্ডার বাটন (সবুজ) */
+  background-color: var(--primary-green);
+  color: white;
+}
+.btn-tertiary:hover {
+  background-color: #388e3c;
+}
+
+/* ---------------- মিডিয়া কোয়েরি (মোবাইল রেসপনসিভনেস) ---------------- */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 10px 20px; /* ছোট স্ক্রিনে প্যাডিং কম হবে */
+  }
+  .services-section {
+    flex-wrap: wrap; /* কার্ডগুলি প্রয়োজনে নিচে চলে আসবে */
+    gap: 20px;
+  }
+  .service-card {
+    width: 100px;
+  }
+  .listings-section {
+    flex-direction: column; /* ছোট স্ক্রিনে পাশাপাশি না থেকে উপরে নিচে আসবে */
+    gap: 20px;
+  }
+  .listing-block {
+    flex-basis: 100%; /* পুরো প্রস্থ নেবে */
+  }
+}

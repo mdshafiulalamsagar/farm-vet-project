@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সকল ডাক্তার</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="doctors.css">
+</head>
+
+<body>
+    <div class="loader-overlay" id="loaderOverlay">
+        <span class="loading-text">Loading...</span>
+    </div>
+
+    <header class="header">
+        <h1 class="logo">ফার্ম ভেট</h1>
+        <div class="search-container">
+            <div class="search-input-wrapper">
+                <input type="text" id="doctorSearch" class="search-bar" placeholder="ডাক্তার খুঁজুন">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+        </div>
+
+        <div class="user-icons">
+            <div class="icon-wrapper">
+                <i class="fas fa-shopping-cart cart-icon icon" id="cartIcon"></i>
+                <span class="cart-badge" style="display:none;">0</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-content-wrapper">
+        <button class="back-button" onclick="history.back()">
+            <i class="fas fa-arrow-left"></i> এক ধাপ পিছনে
+        </button>
+
+        <h1 class="section-title">সকল ডাক্তার</h1>
+
+        <div class="doctor-list" id="doctorList">
+
+            <div class="doctor-item">
+                <div class="doctor-info">
+                    <p class="doctor-name" data-english-name="Mashiat Tahsin">ডা. মাশিয়াত তাহসিন</p>
+                    <p class="doctor-specialty">পশু চিকিৎসক, সার্জারি পশু বিশেষজ্ঞ</p>
+                </div>
+                <div class="appointment-details">
+                    <p class="fee" data-fee="500">৳ 500</p>
+                    <button class="book-button">বুক করুন</button>
+                </div>
+            </div>
+
+            <div class="doctor-item">
+                <div class="doctor-info">
+                    <p class="doctor-name" data-english-name="Masud Rana">ডা. মাসুদ রানা</p>
+                    <p class="doctor-specialty">পোল্ট্রি ও ডেইরি বিশেষজ্ঞ</p>
+                </div>
+                <div class="appointment-details">
+                    <p class="fee" data-fee="800">৳ 800</p>
+                    <button class="book-button">বুক করুন</button>
+                </div>
+            </div>
+
+            <div class="doctor-item">
+                <div class="doctor-info">
+                    <p class="doctor-name" data-english-name="Ahnaf Ridwan Hasib">ডা. অহনাফ রিদোয়ান হাসিব</p>
+                    <p class="doctor-specialty">পশু চিকিৎসক, সার্জারি পশু বিশেষজ্ঞ</p>
+                </div>
+                <div class="appointment-details">
+                    <p class="fee" data-fee="500">৳ 500</p>
+                    <button class="book-button">বুক করুন</button>
+                </div>
+            </div>
+
+            <div class="doctor-item">
+                <div class="doctor-info">
+                    <p class="doctor-name" data-english-name="Imon Ahmed Noyon">ডা. ইমন আহমেদ নয়ন</p>
+                    <p class="doctor-specialty">পোল্ট্রি ও ডেইরি বিশেষজ্ঞ</p>
+                </div>
+                <div class="appointment-details">
+                    <p class="fee" data-fee="800">৳ 800</p>
+                    <button class="book-button">বুক করুন</button>
+                </div>
+            </div>
+
+            <div class="doctor-item">
+                <div class="doctor-info">
+                    <p class="doctor-name" data-english-name="Safiul Alam Sagor">ডা. সফিউল আলম সাগর</p>
+                    <p class="doctor-specialty">পোল্ট্রি ও ডেইরি বিশেষজ্ঞ</p>
+                </div>
+                <div class="appointment-details">
+                    <p class="fee" data-fee="800">৳ 800</p>
+                    <button class="book-button">বুক করুন</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        © ২০২৫ ফার্ম ভেট. সর্বস্বত্ব সংরক্ষিত
+    </footer>
+
+
+    <script src="doctors.js"></script>
+</body>
+
+</html>

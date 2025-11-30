@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ফার্ম ভেট হোমপেজ</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+    <div class="loader-overlay" id="loaderOverlay">
+        <span class="loading-text">Loading...</span>
+    </div>
+
+    <div class="page-container">
+        <header class="top-bar">
+            <h1 class="logo">ফার্ম ভেট</h1>
+            <div class="header-icons" style="display: flex; align-items: center;">
+                <i class="fas fa-bell notification-icon"></i> 
+                <i class="fas fa-shopping-cart cart-icon" id="cart-icon"> <span>0</span> </i>
+                <i class="fas fa-user-circle profile-icon" id="profile-icon"></i> 
+                
+                <button onclick="handleLogout()" style="margin-left: 15px; background-color: #ff4757; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-family: 'Baloo Da 2', cursive; cursor: pointer; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                    <i class="fas fa-sign-out-alt"></i> লগআউট
+                </button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section class="banner-section">
+                <div class="banner-content">
+                    <h3>নিশ্চিত হবে আপনার পশুর স্বাস্থ্য</h3>
+                    <p>আপনার পশুর স্বাস্থ্য, আমাদের দায়িত্ব</p>
+                    <a href="#" class="btn btn-primary">যোগাযোগ করুন</a> </div>
+            </section>
+
+            <section class="services-section">
+                <div class="service-card" id="medicine-card">
+                    <div class="service-icon"><i class="fas fa-pills"></i></div>
+                    <p class="service-name">ঔষধ</p>
+                </div>
+                <div class="service-card" id="doctor-card">
+                    <div class="service-icon"><i class="fas fa-stethoscope"></i></div>
+                    <p class="service-name">ডাক্তার</p>
+                </div>
+                <div class="service-card" id="dashboard-card">
+                    <div class="service-icon"><i class="fas fa-tachometer-alt"></i></div>
+                    <p class="service-name">ড্যাশবোর্ড</p>
+                </div>
+            </section>
+
+            <section class="listings-section">
+                <div class="listing-block doctor-listing">
+                    <h2>টপ রেটেড ডাক্তার</h2>
+                    <div class="list-item">
+                        <div class="item-details">
+                            <p class="item-name">ডা. মাশিয়াত তাহসিন</p>
+                            <p class="item-info">পশু চিকিৎসক, সার্জারি পশু বিশেষজ্ঞ</p>
+                        </div>
+                        <div class="item-action">
+                            <span class="price">৳ 500</span>
+                            <button class="btn btn-secondary">বুক করুন</button>
+                        </div>
+                    </div>
+                    <div class="list-item">
+                        <div class="item-details">
+                            <p class="item-name">ডা. ইমন আহমেদ নয়ন</p>
+                            <p class="item-info">পোল্ট্রি ও ডেইরি বিশেষজ্ঞ</p>
+                        </div>
+                        <div class="item-action">
+                            <span class="price">৳ 800</span>
+                            <button class="btn btn-secondary">বুক করুন</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="listing-block medicine-listing">
+                    <h2>বেস্ট সেলিং ঔষধ</h2>
+                    <div class="list-item">
+                        <div class="item-details">
+                            <p class="item-name">অমিলিটেট ২০%</p>
+                            <p class="item-info">ডোজ: ৫ মিলি</p>
+                        </div>
+                        <div class="item-action">
+                            <span class="price">৳ 180</span>
+                            <button class="btn btn-tertiary">অর্ডার করুন</button>
+                        </div>
+                    </div>
+                    <div class="list-item">
+                        <div class="item-details">
+                            <p class="item-name">ট্যাবলেট ৫০</p>
+                            <p class="item-info">ডোজ: ৫টি ট্যাবলেট</p>
+                        </div>
+                        <div class="item-action">
+                            <span class="price">৳ 250</span>
+                            <button class="btn btn-tertiary">অর্ডার করুন</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <footer>
+        © ২০২৫ ফার্ম ভেট. সর্বস্বত্ব সংরক্ষিত
+    </footer>
+
+    <script src="dashboard.js"></script>
+
+    <script>
+        function handleLogout() {
+            window.location.href = '../index.html';
+        }
+    </script>
+</body>
+</html>

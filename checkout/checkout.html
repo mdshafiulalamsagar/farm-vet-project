@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>চেক আউট</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" href="checkout.css">
+</head>
+
+<body onload="loadCheckoutCart()">
+    <nav class="navbar">
+        <button class="back-button" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+
+        <a href="../dashboard/dashboard.html" class="logo">ফার্ম ভেট</a>
+
+        <div class="search-container">
+        </div>
+
+        <div class="user-icons">
+            <a href="../cart/cart.html" class="icon-wrapper">
+                <i class="fas fa-shopping-cart icon"></i>
+                <span class="cart-badge" id="checkoutCartBadge">0</span>
+            </a>
+        </div>
+    </nav>
+    <h1 class="checkout-page-title">চেক আউট</h1>
+    <div class="checkout-container">
+        <div class="checkout-form">
+            <h2>ডেলিভারি তথ্য</h2>
+            <div class="form-group">
+                <label for="name">নাম: <span class="required-star">*</span></label>
+                <input type="text" id="name" placeholder="আপনার সম্পূর্ণ নাম" value="" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">ফোন নম্বর: <span class="required-star">*</span></label>
+                <input type="tel" id="phone" value="" required>
+            </div>
+            <div class="form-group">
+                <label for="address">ঠিকানা: <span class="required-star">*</span></label>
+                <textarea id="address"
+                    placeholder="এখানে আপনার বিস্তারিত ঠিকানা লিখুন। উদাহরণস্বরূপ: বাড়ি নম্বর, রাস্তা, ওয়ার্ড, থানা, জেলা।"
+                    required> </textarea>
+            </div>
+            <div class="form-group">
+                <label for="delivery-time">অর্ডার করার সময় ও তারিখ:</label>
+                <input type="text" id="delivery-time" value="" readonly>
+            </div>
+            <button class="confirm-btn" id="confirmOrderButton">অর্ডার কনফার্ম করুন</button>
+        </div>
+
+        <div class="cart-summary-box">
+            <div class="cart-total-title">কার্ট টোটাল</div>
+            <div id="checkout-cart-items-container">
+            </div>
+
+            <div class="total-row">
+                <span>মোট:</span>
+                <span id="final-total-amount">৳ 0</span>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        © ২০২৫ ফার্ম ভেট. সর্বস্বত্ব সংরক্ষিত
+    </footer>
+
+    <script src="checkout.js"></script>
+</body>
+
+</html>
