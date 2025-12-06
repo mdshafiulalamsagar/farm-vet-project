@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import mysql.connector
 from passlib.context import CryptContext
 import os
+from datetime import datetime
 
 app = FastAPI()
 
@@ -46,6 +47,12 @@ class UserLogin(BaseModel):
     email: str
     password: str
 
+class OrderModel(BaseModel):
+    user_name: str
+    item_name: str
+    type: str     # 'doctor' or 'medicine'
+    price: int
+
 # --- API ENDPOINTS ---
 
 @app.get("/")
@@ -59,20 +66,14 @@ async def register_user(user: UserSignup):
         conn = get_db_connection()
         cursor = conn.cursor()
         hashed_password = pwd_context.hash(user.password)
-        sql = "INSERT INTO users (full_name, email, password) VALUES (%s, %s, %s)"
-        val = (user.full_name, user.email, hashed_password)
-        cursor.execute(sql, val)
+        cursor.execute("INSERT INTO users (full_name, email, password) VALUES (%s, %s, %s)", 
+                      (user.full_name, user.email, hashed_password))
         conn.commit()
         return {"message": "Account created successfully!"}
-    except mysql.connector.Error as err:
-        if err.errno == 1062:
-            raise HTTPException(status_code=400, detail="Email already exists")
-        else:
-            raise HTTPException(status_code=500, detail=str(err))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
-        if conn and conn.is_connected():
-            cursor.close()
-            conn.close()
+        if conn: conn.close()
 
 @app.post("/login")
 async def login_user(user: UserLogin):
@@ -88,9 +89,7 @@ async def login_user(user: UserLogin):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
-        if conn and conn.is_connected():
-            cursor.close()
-            conn.close()
+        if conn: conn.close()
 
 @app.get("/doctors")
 def get_doctors():
@@ -99,30 +98,42 @@ def get_doctors():
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT * FROM doctors")
-        doctors = cursor.fetchall()
-        return doctors
+        return cursor.fetchall()
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Error fetching doctors")
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
-        if conn and conn.is_connected():
-            cursor.close()
-            conn.close()
+        if conn: conn.close()
 
-# --- NEW: Get Medicines List 💊 ---
 @app.get("/medicines")
 def get_medicines():
     conn = None
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        # সব ঔষধ নিয়ে আসছি
         cursor.execute("SELECT * FROM medicines")
-        medicines = cursor.fetchall()
-        return medicines
+        return cursor.fetchall()
     except Exception as e:
-        print(f"Error fetching medicines: {e}")
-        raise HTTPException(status_code=500, detail="Error fetching medicines")
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
-        if conn and conn.is_connected():
-            cursor.close()
-            conn.close()
+        if conn: conn.close()
+
+# --- NEW: Order API 🛒 ---
+@app.post("/create-order")
+async def create_order(order: OrderModel):
+    conn = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        sql = "INSERT INTO orders (user_name, item_name, type, price) VALUES (%s, %s, %s, %s)"
+        val = (order.user_name, order.item_name, order.type, order.price)
+        
+        cursor.execute(sql, val)
+        conn.commit()
+        
+        return {"message": "Order placed successfully!"}
+    except Exception as e:
+        print(f"Order Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if conn: conn.close()
