@@ -1,3 +1,13 @@
+document.addEventListener('DOMContentLoaded', () => {
+    // লগইনের সময় সেভ করা নামটা নিয়ে আসছি
+    const userName = localStorage.getItem('user_name');
+    
+    if (userName) {
+        // সুন্দর করে নাম ধরে ওয়েলকাম জানানো
+        alert("স্বাগতম, " + userName + "! 👋");
+    }
+});
+
 // কার্ট ব্যাজ আপডেট করার ফাংশন
 function updateCartBadge() {
     const cartSpan = document.querySelector('.cart-icon span');
