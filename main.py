@@ -18,7 +18,6 @@ app.add_middleware(
 
 # 2. Database Connection
 def get_db_connection():
-    # TiDB Connection Details
     ssl_ca_path = "/etc/ssl/certs/ca-certificates.crt"
     config = {
         "host": "gateway01.ap-northeast-1.prod.aws.tidbcloud.com",
@@ -34,10 +33,10 @@ def get_db_connection():
     
     return mysql.connector.connect(**config)
 
-# 3. Security Setup
+# 3. Security
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 
-# 4. Data Models
+# 4. Models
 class UserSignup(BaseModel):
     full_name: str
     email: str
@@ -53,7 +52,6 @@ class UserLogin(BaseModel):
 def read_root():
     return {"message": "Farm Vet Backend is Running!"}
 
-# --- EXISTING: Register ---
 @app.post("/register")
 async def register_user(user: UserSignup):
     conn = None
@@ -76,7 +74,6 @@ async def register_user(user: UserSignup):
             cursor.close()
             conn.close()
 
-# --- EXISTING: Login ---
 @app.post("/login")
 async def login_user(user: UserLogin):
     conn = None
@@ -95,22 +92,36 @@ async def login_user(user: UserLogin):
             cursor.close()
             conn.close()
 
-# --- NEW: Get Doctors List 👨‍⚕️ ---
 @app.get("/doctors")
 def get_doctors():
     conn = None
     try:
         conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True) # ডাটা সহজভাবে পাওয়ার জন্য dictionary=True
-        
-        # ডাটাবেস থেকে সব ডাক্তার নিয়ে আসছি
+        cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT * FROM doctors")
         doctors = cursor.fetchall()
-        
         return doctors
     except Exception as e:
-        print(f"Error fetching doctors: {e}")
         raise HTTPException(status_code=500, detail="Error fetching doctors")
+    finally:
+        if conn and conn.is_connected():
+            cursor.close()
+            conn.close()
+
+# --- NEW: Get Medicines List 💊 ---
+@app.get("/medicines")
+def get_medicines():
+    conn = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        # সব ঔষধ নিয়ে আসছি
+        cursor.execute("SELECT * FROM medicines")
+        medicines = cursor.fetchall()
+        return medicines
+    except Exception as e:
+        print(f"Error fetching medicines: {e}")
+        raise HTTPException(status_code=500, detail="Error fetching medicines")
     finally:
         if conn and conn.is_connected():
             cursor.close()
