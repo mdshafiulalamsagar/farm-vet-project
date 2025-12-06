@@ -4,11 +4,9 @@ from fastapi.middleware.cors import CORSMiddleware
 import mysql.connector
 from passlib.context import CryptContext
 import os
-from datetime import datetime
 
 app = FastAPI()
 
-# 1. CORS Setup
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -17,7 +15,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 2. Database Connection
 def get_db_connection():
     ssl_ca_path = "/etc/ssl/certs/ca-certificates.crt"
     config = {
@@ -31,13 +28,10 @@ def get_db_connection():
     }
     if os.path.exists(ssl_ca_path):
         config["ssl_ca"] = ssl_ca_path
-    
     return mysql.connector.connect(**config)
 
-# 3. Security
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 
-# 4. Models
 class UserSignup(BaseModel):
     full_name: str
     email: str
@@ -47,13 +41,12 @@ class UserLogin(BaseModel):
     email: str
     password: str
 
+# অর্ডারের জন্য মডেল
 class OrderModel(BaseModel):
     user_name: str
     item_name: str
-    type: str     # 'doctor' or 'medicine'
+    type: str
     price: int
-
-# --- API ENDPOINTS ---
 
 @app.get("/")
 def read_root():
@@ -66,8 +59,7 @@ async def register_user(user: UserSignup):
         conn = get_db_connection()
         cursor = conn.cursor()
         hashed_password = pwd_context.hash(user.password)
-        cursor.execute("INSERT INTO users (full_name, email, password) VALUES (%s, %s, %s)", 
-                      (user.full_name, user.email, hashed_password))
+        cursor.execute("INSERT INTO users (full_name, email, password) VALUES (%s, %s, %s)", (user.full_name, user.email, hashed_password))
         conn.commit()
         return {"message": "Account created successfully!"}
     except Exception as e:
@@ -117,23 +109,19 @@ def get_medicines():
     finally:
         if conn: conn.close()
 
-# --- NEW: Order API 🛒 ---
+# --- অর্ডার করার API ---
 @app.post("/create-order")
 async def create_order(order: OrderModel):
     conn = None
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        
         sql = "INSERT INTO orders (user_name, item_name, type, price) VALUES (%s, %s, %s, %s)"
         val = (order.user_name, order.item_name, order.type, order.price)
-        
         cursor.execute(sql, val)
         conn.commit()
-        
         return {"message": "Order placed successfully!"}
     except Exception as e:
-        print(f"Order Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         if conn: conn.close()
