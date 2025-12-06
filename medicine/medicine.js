@@ -31,7 +31,7 @@ function renderMedicines(medicines) {
                 </div>
                 <div class="product-action">
                     <div class="price">৳ ${med.price}</div>
-                    <button class="order-button" onclick="alert('${med.name} কার্টে যোগ হয়েছে। (অর্ডার সিস্টেম শীঘ্রই আসছে!)')">অর্ডার করুন</button>
+                    <button class="order-button" onclick="alert('পণ্যটি কার্টে যুক্ত হয়েছে! (Checkout coming soon)')">অর্ডার করুন</button>
                 </div>
             </div>
         `;
