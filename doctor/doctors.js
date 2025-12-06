@@ -1,118 +1,91 @@
-// কার্ট ব্যাজ আপডেট ফাংশন
-function updateCartBadge(count) {
-    const badge = document.querySelector('.cart-badge');
-    if (count > 0) {
-        badge.textContent = count;
-        badge.style.display = 'block';
-    } else {
-        badge.textContent = '0';
-        badge.style.display = 'none';
-    }
-}
+// তোমার Vercel API লিংক
+const API_URL = "https://farm-vet-project.vercel.app/doctors";
 
-// লোডার দেখানোর ফাংশন (শুধুমাত্র কার্ট আইকনে ক্লিক করলে ব্যবহার হবে)
-function showLoaderAndRedirect(url) {
-    const loader = document.getElementById('loaderOverlay');
-    loader.style.opacity = '1';
-    loader.style.display = 'flex';
-
-    setTimeout(() => {
-        window.location.href = url;
-    }, 1500); // 1.5 সেকেন্ড
-}
-
-// সার্চ ফাংশন
-function filterDoctors() {
-    const input = document.getElementById('doctorSearch');
-    const filter = input.value.toUpperCase();
-    const doctorList = document.getElementById('doctorList');
-    const items = doctorList.getElementsByClassName('doctor-item');
-
-    for (let i = 0; i < items.length; i++) {
-        const nameElement = items[i].querySelector('.doctor-name');
-        const banglaName = nameElement.textContent.toUpperCase();
-        // অতিরিক্ত ডেটা অ্যাট্রিবিউট থেকে ইংরেজি নাম
-        const englishName = nameElement.getAttribute('data-english-name').toUpperCase();
-
-        // বাংলা নাম বা ইংরেজি নামের সাথে সার্চের মিল খুঁজবে
-        if (banglaName.includes(filter) || englishName.includes(filter)) {
-            items[i].style.display = "";
-        } else {
-            items[i].style.display = "none";
-        }
-    }
-}
-
-
-window.onload = function () {
-    // পেজ লোড হওয়ার পর লোডার হাইড
-    const initialLoader = document.getElementById('loaderOverlay');
-    if (initialLoader) {
-        setTimeout(() => {
-            initialLoader.style.opacity = '0';
-            setTimeout(() => {
-                initialLoader.style.display = 'none';
-            }, 300);
-        }, 500); // 0.5 সেকেন্ডে পেজ কন্টেন্ট দেখাবে
-
-    }
-
-    // কার্ট আইটেম লোড এবং ব্যাজ আপডেট
-    const initialCart = JSON.parse(localStorage.getItem('userCart')) || [];
-    updateCartBadge(initialCart.length);
-
-    // সার্চ ইনপুট ইভেন্ট লিসেনার
-    document.getElementById('doctorSearch').addEventListener('keyup', filterDoctors);
-
-    // কার্ট আইকনে ক্লিক লিসেনার (১.৫ সেকেন্ড লোডার দেখিয়ে কার্টে যাবে)
-    document.getElementById('cartIcon').addEventListener('click', () => {
-        showLoaderAndRedirect('../cart/cart.html');
-    });
-
-
-    const bookButtons = document.querySelectorAll('.book-button');
-
-    bookButtons.forEach(button => {
-        button.addEventListener('click', (event) => {
-            const doctorItem = event.target.closest('.doctor-item');
-            if (!doctorItem) return;
-
-            const nameElement = doctorItem.querySelector('.doctor-name');
-            const specialtyElement = doctorItem.querySelector('.doctor-specialty');
-            const feeElement = doctorItem.querySelector('.fee');
-
-            const doctorName = nameElement ? nameElement.textContent.trim() : 'Unknown Doctor';
-            const doctorSpecialty = specialtyElement ? specialtyElement.textContent.trim() : 'Unknown Specialty';
-            const doctorFee = parseInt(feeElement.getAttribute('data-fee')) || 0;
-
-            const newCartItem = {
-                type: 'doctor',
-                name: doctorName,
-                info: doctorSpecialty,
-                price: doctorFee,
-                quantity: 1
-            };
-
-            let cart = JSON.parse(localStorage.getItem('userCart')) || [];
-
-            const existingItemIndex = cart.findIndex(item =>
-                item.type === 'doctor' && item.name === doctorName
-            );
-
-            if (existingItemIndex === -1) {
-                cart.push(newCartItem);
-
-                localStorage.setItem('userCart', JSON.stringify(cart));
-
-                updateCartBadge(cart.length);
-
-                // শুধু অ্যালার্ট দেখাবে, রিডাইরেক্ট করবে না
-                alert(`${doctorName} সফলভাবে আপনার কার্টে যোগ করা হয়েছে।`);
-
-            } else {
-                // শুধু অ্যালার্ট দেখাবে, রিডাইরেক্ট করবে না
-                alert(`${doctorName} ইতিমধ্যেই আপনার কার্টে রয়েছে।`);
-            }
+// ১. পেজ লোড হলে এই ফাংশন কল হবে
+document.addEventListener('DOMContentLoaded', () => {
+    fetchDoctors();
+    
+    // সার্চ বারের লজিক
+    const searchInput = document.getElementById('doctorSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            filterDoctors(e.target.value);
         });
+    }
+});
+
+let allDoctors = []; // সব ডাক্তার এখানে জমা থাকবে
+
+// ২. ডাটাবেস থেকে ডাক্তার আনার ফাংশন
+async function fetchDoctors() {
+    const loader = document.getElementById('loaderOverlay');
+    
+    try {
+        const response = await fetch(API_URL);
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        allDoctors = data; // ডাটা সেভ করলাম
+        renderDoctors(allDoctors); // স্ক্রিনে দেখালাম
+
+    } catch (error) {
+        console.error("Error fetching doctors:", error);
+        const container = document.getElementById('doctorList');
+        if(container) {
+            container.innerHTML = `<p style="text-align:center; color:red; font-family:'Baloo Da 2';">সার্ভার থেকে ডাটা লোড করা যাচ্ছে না। দয়া করে ইন্টারনেট চেক করুন।</p>`;
+        }
+    } finally {
+        // লোডিং সরালাম
+        if(loader) loader.style.display = 'none';
+    }
+}
+
+// ৩. স্ক্রিনে ডাক্তার দেখানোর ফাংশন (ডিজাইন জেনারেটর)
+function renderDoctors(doctors) {
+    const container = document.getElementById('doctorList');
+    if (!container) return;
+    
+    container.innerHTML = ''; // আগের সব মুছে ফ্রেশ করে নিলাম
+
+    if (doctors.length === 0) {
+        container.innerHTML = `<p style="text-align:center; font-family:'Baloo Da 2';">কোনো ডাক্তার পাওয়া যায়নি।</p>`;
+        return;
+    }
+
+    doctors.forEach(doc => {
+        // এই সেইম HTML স্ট্রাকচার তুমি আগে হাতে লিখেছিলে
+        // এখন আমরা ডাটাবেস থেকে ভ্যালু বসাচ্ছি
+        const doctorCard = `
+            <div class="doctor-item">
+                <div class="doctor-info">
+                    <p class="doctor-name">${doc.name}</p>
+                    <p class="doctor-specialty">${doc.speciality}</p>
+                    ${doc.degree ? `<p style="font-size: 13px; color: #666; margin-top: 2px;">${doc.degree}</p>` : ''}
+                </div>
+                <div class="appointment-details">
+                    <p class="fee">৳ ${doc.fee}</p>
+                    <button class="book-button" onclick="bookDoctor('${doc.name}', ${doc.fee})">বুক করুন</button>
+                </div>
+            </div>
+        `;
+        container.innerHTML += doctorCard;
     });
-};
+}
+
+// ৪. সার্চ ফিল্টার ফাংশন
+function filterDoctors(searchTerm) {
+    const term = searchTerm.toLowerCase();
+    const filtered = allDoctors.filter(doc => 
+        doc.name.toLowerCase().includes(term) || 
+        doc.speciality.toLowerCase().includes(term)
+    );
+    renderDoctors(filtered);
+}
+
+// ৫. বুকিং ফাংশন (আপাতত অ্যালার্ট)
+function bookDoctor(name, fee) {
+    alert(`আপনি ${name}-কে সিলেক্ট করেছেন। ফি: ${fee} টাকা।\n(বুকিং সিস্টেম শীঘ্রই যুক্ত হবে!)`);
+}
