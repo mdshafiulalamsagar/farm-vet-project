@@ -1,122 +1,79 @@
-// কার্ট ব্যাজ আপডেট ফাংশন
-function updateCartBadge(count) {
-    const badge = document.getElementById('cartBadge');
-    if (badge) {
-        if (count > 0) {
-            badge.textContent = count;
-            badge.style.display = 'block';
-        } else {
-            badge.textContent = '0';
-            badge.style.display = 'none';
-        }
-    }
-}
+// Vercel API Link
+const API_URL = "https://farm-vet-project.vercel.app/medicines";
 
-// লোডার দেখানোর ফাংশন
-function showLoaderAndRedirect(url) {
-    const loader = document.getElementById('loaderOverlay');
-    loader.style.opacity = '1';
-    loader.style.display = 'flex';
+document.addEventListener('DOMContentLoaded', () => {
+    fetchMedicines();
 
-    setTimeout(() => {
-        window.location.href = url;
-    }, 1500); // 1.5 সেকেন্ড
-}
-
-// সার্চ ফাংশন
-function filterMedicines() {
-    const input = document.getElementById('medicineSearch');
-    const filter = input.value.toUpperCase();
-    const productList = document.getElementById('productList');
-    const items = productList.getElementsByClassName('product-item');
-
-    for (let i = 0; i < items.length; i++) {
-        const nameElement = items[i].querySelector('.product-name');
-        const banglaName = nameElement.textContent.toUpperCase();
-        // ডেটা অ্যাট্রিবিউট থেকে ইংরেজি নাম
-        const englishName = nameElement.getAttribute('data-english-name').toUpperCase();
-
-        // বাংলা নাম বা ইংরেজি নামের সাথে সার্চের মিল খুঁজবে
-        if (banglaName.includes(filter) || englishName.includes(filter)) {
-            items[i].style.display = "";
-        } else {
-            items[i].style.display = "none";
-        }
-    }
-}
-
-
-window.onload = function () {
-    const loader = document.getElementById('loaderOverlay');
-
-    // পেজ লোড হওয়ার পর লোডার হাইড
-    if (loader) {
-        setTimeout(() => {
-            loader.style.opacity = '0';
-            setTimeout(() => {
-                loader.style.display = 'none';
-            }, 300);
-        }, 500);
-    }
-
-    // কার্ট আইটেম লোড এবং ব্যাজ আপডেট
-    const initialCart = JSON.parse(localStorage.getItem('userCart')) || [];
-    updateCartBadge(initialCart.length);
-
-    // সার্চ ইনপুট ইভেন্ট লিসেনার
-    document.getElementById('medicineSearch').addEventListener('keyup', filterMedicines);
-
-    // কার্ট আইকনে ক্লিক লিসেনার (১.৫ সেকেন্ড লোডার দেখিয়ে কার্টে যাবে)
-    document.getElementById('cartIconLink').addEventListener('click', (e) => {
-        e.preventDefault(); // ডিফল্ট লিঙ্ক প্রিভেন্ট
-        showLoaderAndRedirect('../cart/cart.html');
-    });
-
-
-    const orderButtons = document.querySelectorAll('.order-button');
-
-    orderButtons.forEach(button => {
-        button.addEventListener('click', (event) => {
-            const productItem = event.target.closest('.product-item');
-            if (!productItem) return;
-
-            const nameElement = productItem.querySelector('.product-name');
-            const manufacturerElement = productItem.querySelector('.manufacturer');
-            const priceElement = productItem.querySelector('.price');
-
-            const productName = nameElement ? nameElement.textContent.trim() : 'Unknown Product';
-            const productManufacturer = manufacturerElement ? manufacturerElement.textContent.trim() : 'Unknown Manufacturer';
-            const productPriceText = priceElement ? priceElement.textContent.trim().replace('৳', '').trim() : '0';
-            const productPrice = parseInt(productPriceText) || 0;
-
-            const newCartItem = {
-                type: 'medicine',
-                name: productName,
-                info: productManufacturer,
-                price: productPrice,
-                quantity: 1
-            };
-
-            let cart = JSON.parse(localStorage.getItem('userCart')) || [];
-
-            const existingItemIndex = cart.findIndex(item =>
-                item.type === 'medicine' && item.name === productName
-            );
-
-            if (existingItemIndex > -1) {
-                cart[existingItemIndex].quantity += 1;
-                alert(`${productName} এর পরিমাণ বাড়ানো হয়েছে!`);
-            } else {
-                cart.push(newCartItem);
-                alert(`${productName} কার্টে যোগ করা হয়েছে!`);
-            }
-
-            localStorage.setItem('userCart', JSON.stringify(cart));
-            updateCartBadge(cart.length);
-
-            // এখানে পরিবর্তন: সরাসরি কার্টে না গিয়ে শুধু অ্যালার্ট দেখাবে।
-            // যদি কার্ট পেজে যেতে চান, নিচের লাইনটি Uncomment করুন:
-            // window.location.href = '../cart/cart.html'; 
+    // সার্চ বার লজিক
+    const searchInput = document.getElementById('medicineSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            filterMedicines(e.target.value);
         });
+    }
+});
+
+let allMedicines = []; // সব ঔষধ জমা থাকবে
+
+// ১. ডাটাবেস থেকে ঔষধ আনার ফাংশন
+async function fetchMedicines() {
+    const loader = document.getElementById('loaderOverlay');
+    
+    try {
+        const response = await fetch(API_URL);
+        if (!response.ok) throw new Error("Network Error");
+        
+        const data = await response.json();
+        allMedicines = data;
+        renderMedicines(allMedicines);
+
+    } catch (error) {
+        console.error("Error fetching medicines:", error);
+        document.getElementById('productList').innerHTML = `<p style="text-align:center; color:red; width:100%;">ডাটা লোড হচ্ছে না। ইন্টারনেট চেক করুন।</p>`;
+    } finally {
+        if(loader) loader.style.display = 'none';
+    }
+}
+
+// ২. স্ক্রিনে ঔষধ দেখানোর ফাংশন (ডিজাইন জেনারেটর)
+function renderMedicines(medicines) {
+    const container = document.getElementById('productList');
+    container.innerHTML = '';
+
+    if (medicines.length === 0) {
+        container.innerHTML = `<p style="text-align:center; width:100%;">কোনো ঔষধ পাওয়া যায়নি।</p>`;
+        return;
+    }
+
+    medicines.forEach(med => {
+        // হুবহু তোমার আগের HTML স্ট্রাকচার
+        const productHTML = `
+            <div class="product-item">
+                <div class="product-details">
+                    <div class="product-name">${med.name}</div>
+                    <div class="manufacturer" style="color: gray; font-size: 14px;">ডোজ: ${med.dose}</div>
+                </div>
+                <div class="product-action">
+                    <div class="price">৳ ${med.price}</div>
+                    <button class="order-button" onclick="addToCart('${med.name}', ${med.price})">অর্ডার করুন</button>
+                </div>
+            </div>
+        `;
+        container.innerHTML += productHTML;
     });
-};
+}
+
+// ৩. সার্চ ফিল্টার
+function filterMedicines(searchTerm) {
+    const term = searchTerm.toLowerCase();
+    const filtered = allMedicines.filter(med => 
+        med.name.toLowerCase().includes(term)
+    );
+    renderMedicines(filtered);
+}
+
+// ৪. কার্ট লজিক (আপাতত অ্যালার্ট)
+function addToCart(name, price) {
+    alert(`'${name}' কার্টে যুক্ত করা হয়েছে। দাম: ${price} টাকা।`);
+    // এখানে ভবিষ্যতে কার্ট লজিক বসবে
+}
