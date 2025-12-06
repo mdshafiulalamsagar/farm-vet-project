@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function fetchDoctors() {
+    // লোডার থাকলে ধরবো
     const loader = document.getElementById('loaderOverlay');
     try {
         const response = await fetch(API_URL);
@@ -13,6 +14,7 @@ async function fetchDoctors() {
     } catch (error) {
         console.error("Error:", error);
     } finally {
+        // ডাটা আসা শেষ হলে লোডার গায়েব হবে
         if(loader) loader.style.display = 'none';
     }
 }
@@ -32,7 +34,7 @@ function renderDoctors(doctors) {
                 </div>
                 <div class="appointment-details">
                     <p class="fee">৳ ${doc.fee}</p>
-                    <button class="book-button" onclick="alert('${doc.name}-কে সিলেক্ট করেছেন। (বুকিং সিস্টেম শীঘ্রই আসছে!)')">বুক করুন</button>
+                    <button class="book-button" onclick="alert('ধন্যবাদ! আপনার বুকিং রিকোয়েস্ট নেওয়া হয়েছে। আমরা শীঘ্রই কল করবো।')">বুক করুন</button>
                 </div>
             </div>
         `;
