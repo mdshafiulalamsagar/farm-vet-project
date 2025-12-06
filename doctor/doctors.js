@@ -1,91 +1,71 @@
-// তোমার Vercel API লিংক
-const API_URL = "https://farm-vet-project.vercel.app/doctors";
+const API_URL = "https://farm-vet-project.vercel.app";
 
-// ১. পেজ লোড হলে এই ফাংশন কল হবে
 document.addEventListener('DOMContentLoaded', () => {
     fetchDoctors();
-    
-    // সার্চ বারের লজিক
-    const searchInput = document.getElementById('doctorSearch');
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            filterDoctors(e.target.value);
-        });
-    }
 });
 
-let allDoctors = []; // সব ডাক্তার এখানে জমা থাকবে
-
-// ২. ডাটাবেস থেকে ডাক্তার আনার ফাংশন
 async function fetchDoctors() {
-    const loader = document.getElementById('loaderOverlay');
-    
     try {
-        const response = await fetch(API_URL);
-        
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
+        const response = await fetch(`${API_URL}/doctors`);
         const data = await response.json();
-        allDoctors = data; // ডাটা সেভ করলাম
-        renderDoctors(allDoctors); // স্ক্রিনে দেখালাম
-
+        renderDoctors(data);
     } catch (error) {
-        console.error("Error fetching doctors:", error);
-        const container = document.getElementById('doctorList');
-        if(container) {
-            container.innerHTML = `<p style="text-align:center; color:red; font-family:'Baloo Da 2';">সার্ভার থেকে ডাটা লোড করা যাচ্ছে না। দয়া করে ইন্টারনেট চেক করুন।</p>`;
-        }
-    } finally {
-        // লোডিং সরালাম
-        if(loader) loader.style.display = 'none';
+        console.error("Error:", error);
     }
 }
 
-// ৩. স্ক্রিনে ডাক্তার দেখানোর ফাংশন (ডিজাইন জেনারেটর)
 function renderDoctors(doctors) {
     const container = document.getElementById('doctorList');
-    if (!container) return;
-    
-    container.innerHTML = ''; // আগের সব মুছে ফ্রেশ করে নিলাম
-
-    if (doctors.length === 0) {
-        container.innerHTML = `<p style="text-align:center; font-family:'Baloo Da 2';">কোনো ডাক্তার পাওয়া যায়নি।</p>`;
-        return;
-    }
+    if(!container) return;
+    container.innerHTML = '';
 
     doctors.forEach(doc => {
-        // এই সেইম HTML স্ট্রাকচার তুমি আগে হাতে লিখেছিলে
-        // এখন আমরা ডাটাবেস থেকে ভ্যালু বসাচ্ছি
-        const doctorCard = `
+        container.innerHTML += `
             <div class="doctor-item">
                 <div class="doctor-info">
                     <p class="doctor-name">${doc.name}</p>
                     <p class="doctor-specialty">${doc.speciality}</p>
-                    ${doc.degree ? `<p style="font-size: 13px; color: #666; margin-top: 2px;">${doc.degree}</p>` : ''}
+                    <p style="font-size:13px; color:gray;">${doc.degree}</p>
                 </div>
                 <div class="appointment-details">
                     <p class="fee">৳ ${doc.fee}</p>
-                    <button class="book-button" onclick="bookDoctor('${doc.name}', ${doc.fee})">বুক করুন</button>
+                    <button class="book-button" onclick="placeOrder('${doc.name}', ${doc.fee}, 'doctor')">বুক করুন</button>
                 </div>
             </div>
         `;
-        container.innerHTML += doctorCard;
     });
 }
 
-// ৪. সার্চ ফিল্টার ফাংশন
-function filterDoctors(searchTerm) {
-    const term = searchTerm.toLowerCase();
-    const filtered = allDoctors.filter(doc => 
-        doc.name.toLowerCase().includes(term) || 
-        doc.speciality.toLowerCase().includes(term)
-    );
-    renderDoctors(filtered);
-}
+// --- ORDER FUNCTION ---
+async function placeOrder(itemName, price, type) {
+    const userName = localStorage.getItem('user_name');
+    
+    if (!userName) {
+        alert("দয়া করে আগে লগইন করুন!");
+        window.location.href = "../index.html"; 
+        return;
+    }
 
-// ৫. বুকিং ফাংশন (আপাতত অ্যালার্ট)
-function bookDoctor(name, fee) {
-    alert(`আপনি ${name}-কে সিলেক্ট করেছেন। ফি: ${fee} টাকা।\n(বুকিং সিস্টেম শীঘ্রই যুক্ত হবে!)`);
+    if(!confirm(`আপনি কি '${itemName}' বুক করতে চান? ফি: ${price} টাকা।`)) return;
+
+    try {
+        const response = await fetch(`${API_URL}/create-order`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_name: userName,
+                item_name: itemName,
+                type: type,
+                price: price
+            })
+        });
+
+        if (response.ok) {
+            alert("✅ বুকিং সফল হয়েছে! শীঘ্রই আপনার সাথে যোগাযোগ করা হবে।");
+        } else {
+            alert("❌ সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+        }
+    } catch (error) {
+        alert("ইন্টারনেট কানেকশন চেক করুন।");
+    }
 }
