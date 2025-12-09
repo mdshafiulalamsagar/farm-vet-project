@@ -44,11 +44,10 @@ class UserLogin(BaseModel):
     email: str
     password: str
 
-# অর্ডারের জন্য নতুন মডেল
 class OrderModel(BaseModel):
     user_name: str
     item_name: str
-    type: str       # 'doctor' or 'medicine'
+    type: str
     price: int
 
 # --- API ENDPOINTS ---
@@ -114,24 +113,39 @@ def get_medicines():
     finally:
         if conn: conn.close()
 
-# --- NEW: Order API (আসল কাজ এখানে) ---
 @app.post("/create-order")
 async def create_order(order: OrderModel):
     conn = None
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        
-        # ডাটাবেসে অর্ডার সেভ করছি
         sql = "INSERT INTO orders (user_name, item_name, type, price) VALUES (%s, %s, %s, %s)"
         val = (order.user_name, order.item_name, order.type, order.price)
-        
         cursor.execute(sql, val)
         conn.commit()
-        
         return {"message": "Order placed successfully!"}
     except Exception as e:
-        print(f"Order Error: {e}") # কনসোলে এরর দেখাবে
+        print(f"Order Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if conn: conn.close()
+
+# --- NEW: Get User Orders (লগইন করা ইউজারের অর্ডার দেখাবে) ---
+@app.get("/my-orders")
+def get_user_orders(user_name: str):
+    conn = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        # ডাটাবেস থেকে শুধু এই ইউজারের অর্ডার খুঁজবো
+        sql = "SELECT * FROM orders WHERE user_name = %s ORDER BY order_date DESC"
+        cursor.execute(sql, (user_name,))
+        
+        orders = cursor.fetchall()
+        return orders
+    except Exception as e:
+        print(f"Error fetching user orders: {e}")
+        raise HTTPException(status_code=500, detail="Error fetching orders")
     finally:
         if conn: conn.close()
