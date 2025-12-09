@@ -7,6 +7,7 @@ import os
 
 app = FastAPI()
 
+# 1. CORS Setup
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -15,6 +16,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# 2. Database Connection
 def get_db_connection():
     ssl_ca_path = "/etc/ssl/certs/ca-certificates.crt"
     config = {
@@ -32,6 +34,7 @@ def get_db_connection():
 
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 
+# --- Models ---
 class UserSignup(BaseModel):
     full_name: str
     email: str
@@ -41,12 +44,14 @@ class UserLogin(BaseModel):
     email: str
     password: str
 
-# অর্ডারের জন্য মডেল
+# অর্ডারের জন্য নতুন মডেল
 class OrderModel(BaseModel):
     user_name: str
     item_name: str
-    type: str
+    type: str       # 'doctor' or 'medicine'
     price: int
+
+# --- API ENDPOINTS ---
 
 @app.get("/")
 def read_root():
@@ -109,19 +114,24 @@ def get_medicines():
     finally:
         if conn: conn.close()
 
-# --- অর্ডার করার API ---
+# --- NEW: Order API (আসল কাজ এখানে) ---
 @app.post("/create-order")
 async def create_order(order: OrderModel):
     conn = None
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
+        
+        # ডাটাবেসে অর্ডার সেভ করছি
         sql = "INSERT INTO orders (user_name, item_name, type, price) VALUES (%s, %s, %s, %s)"
         val = (order.user_name, order.item_name, order.type, order.price)
+        
         cursor.execute(sql, val)
         conn.commit()
+        
         return {"message": "Order placed successfully!"}
     except Exception as e:
+        print(f"Order Error: {e}") # কনসোলে এরর দেখাবে
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         if conn: conn.close()
