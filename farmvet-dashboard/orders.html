@@ -12,6 +12,10 @@
         .back-btn { text-decoration: none; color: white; background: #6a11cb; padding: 8px 15px; border-radius: 5px; display: flex; align-items: center; gap: 5px; }
         .title { flex-grow: 1; text-align: center; color: #333; margin: 0; font-size: 24px; }
         
+        /* লোডিং স্টাইল */
+        .loading { text-align: center; margin-top: 50px; color: #666; }
+
+        /* অর্ডার কার্ড ডিজাইন */
         .order-card { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
         .order-info h3 { margin: 0 0 5px 0; font-size: 18px; color: #444; }
         .order-info p { margin: 0; color: #777; font-size: 14px; }
@@ -26,45 +30,14 @@
     <div class="header">
         <a href="farmvet-dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> ব্যাক</a>
         <h2 class="title">আমার অর্ডার সমূহ</h2>
-        <div style="width: 70px;"></div> </div>
-
-    <div class="order-list">
-        <div class="order-card">
-            <div class="order-info">
-                <h3>প্যারাসিটামল ভেট</h3>
-                <p>অর্ডার আইডি: #FV1023</p>
-                <p>তারিখ: ১০ ডিসেম্বর, ২০২৫</p>
-            </div>
-            <div class="order-right">
-                <span class="status pending">পেন্ডিং</span>
-                <div class="price">৳ ১৫০</div>
-            </div>
-        </div>
-
-        <div class="order-card">
-            <div class="order-info">
-                <h3>ভিটামিন এ-ডি-ই</h3>
-                <p>অর্ডার আইডি: #FV1024</p>
-                <p>তারিখ: ০৯ ডিসেম্বর, ২০২৫</p>
-            </div>
-            <div class="order-right">
-                <span class="status pending">পেন্ডিং</span>
-                <div class="price">৳ ১২০</div>
-            </div>
-        </div>
-
-        <div class="order-card">
-            <div class="order-info">
-                <h3>কৃমিনাশক বোলাস</h3>
-                <p>অর্ডার আইডি: #FV1001</p>
-                <p>তারিখ: ০১ ডিসেম্বর, ২০২৫</p>
-            </div>
-            <div class="order-right">
-                <span class="status success">সম্পন্ন</span>
-                <div class="price">৳ ৫০</div>
-            </div>
-        </div>
+        <div style="width: 70px;"></div>
     </div>
+
+    <div class="order-list" id="orderList">
+        <div class="loading">অর্ডার লোড হচ্ছে...</div>
+    </div>
+
+    <script src="orders.js"></script>
 
 </body>
 </html>
