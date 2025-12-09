@@ -130,18 +130,14 @@ async def create_order(order: OrderModel):
     finally:
         if conn: conn.close()
 
-# --- NEW: Get User Orders (লগইন করা ইউজারের অর্ডার দেখাবে) ---
 @app.get("/my-orders")
 def get_user_orders(user_name: str):
     conn = None
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        
-        # ডাটাবেস থেকে শুধু এই ইউজারের অর্ডার খুঁজবো
         sql = "SELECT * FROM orders WHERE user_name = %s ORDER BY order_date DESC"
         cursor.execute(sql, (user_name,))
-        
         orders = cursor.fetchall()
         return orders
     except Exception as e:
@@ -150,7 +146,7 @@ def get_user_orders(user_name: str):
     finally:
         if conn: conn.close()
 
-# --- NEW: Dashboard Stats API (ড্যাশবোর্ডের সংখ্যা গুনবে) ---
+# --- NEW: Dashboard Stats API (সংখ্যা গোনার জন্য) ---
 @app.get("/dashboard-stats")
 def get_dashboard_stats(user_name: str):
     conn = None
@@ -158,16 +154,15 @@ def get_dashboard_stats(user_name: str):
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        # ১. মোট অর্ডার গুনছি
+        # ১. মোট অর্ডার
         cursor.execute("SELECT COUNT(*) FROM orders WHERE user_name = %s", (user_name,))
         total_orders = cursor.fetchone()[0]
 
-        # ২. পেন্ডিং অর্ডার গুনছি
+        # ২. পেন্ডিং অর্ডার
         cursor.execute("SELECT COUNT(*) FROM orders WHERE user_name = %s AND status = 'Pending'", (user_name,))
         pending_orders = cursor.fetchone()[0]
 
-        # ৩. সম্পন্ন (Completed) অর্ডার গুনছি
-        # (বিঃদ্রঃ তোমার ডাটাবেসে আপাতত সব Pending আছে, তাই এটা ০ আসতে পারে)
+        # ৩. সম্পন্ন অর্ডার
         cursor.execute("SELECT COUNT(*) FROM orders WHERE user_name = %s AND status = 'Completed'", (user_name,))
         completed_orders = cursor.fetchone()[0]
 
@@ -179,6 +174,6 @@ def get_dashboard_stats(user_name: str):
 
     except Exception as e:
         print(f"Error stats: {e}")
-        return {"total": 0, "pending": 0, "completed": 0} # এরর হলে ০ দেখাবে
+        return {"total": 0, "pending": 0, "completed": 0}
     finally:
         if conn: conn.close()
