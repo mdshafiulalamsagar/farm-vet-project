@@ -45,3 +45,18 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+// লগআউট ফাংশন
+function handleLogout() {
+    // ১. ইউজারের কাছে কনফার্মেশন চাইবো
+    const confirmLogout = confirm("আপনি কি নিশ্চিত লগআউট করতে চান?");
+    
+    if (confirmLogout) {
+        // ২. ব্রাউজার থেকে ইউজারের সব ডাটা মুছে ফেলবো
+        localStorage.removeItem('user_name');
+        localStorage.removeItem('user_id');
+        
+        // ৩. লগইন পেজে (Home Page) পাঠিয়ে দিবো
+        window.location.href = "../index.html"; 
+    }
+}
