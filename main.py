@@ -149,3 +149,36 @@ def get_user_orders(user_name: str):
         raise HTTPException(status_code=500, detail="Error fetching orders")
     finally:
         if conn: conn.close()
+
+# --- NEW: Dashboard Stats API (ড্যাশবোর্ডের সংখ্যা গুনবে) ---
+@app.get("/dashboard-stats")
+def get_dashboard_stats(user_name: str):
+    conn = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # ১. মোট অর্ডার গুনছি
+        cursor.execute("SELECT COUNT(*) FROM orders WHERE user_name = %s", (user_name,))
+        total_orders = cursor.fetchone()[0]
+
+        # ২. পেন্ডিং অর্ডার গুনছি
+        cursor.execute("SELECT COUNT(*) FROM orders WHERE user_name = %s AND status = 'Pending'", (user_name,))
+        pending_orders = cursor.fetchone()[0]
+
+        # ৩. সম্পন্ন (Completed) অর্ডার গুনছি
+        # (বিঃদ্রঃ তোমার ডাটাবেসে আপাতত সব Pending আছে, তাই এটা ০ আসতে পারে)
+        cursor.execute("SELECT COUNT(*) FROM orders WHERE user_name = %s AND status = 'Completed'", (user_name,))
+        completed_orders = cursor.fetchone()[0]
+
+        return {
+            "total": total_orders,
+            "pending": pending_orders,
+            "completed": completed_orders
+        }
+
+    except Exception as e:
+        print(f"Error stats: {e}")
+        return {"total": 0, "pending": 0, "completed": 0} # এরর হলে ০ দেখাবে
+    finally:
+        if conn: conn.close()
