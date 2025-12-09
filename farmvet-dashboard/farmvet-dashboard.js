@@ -60,3 +60,18 @@ function handleLogout() {
         window.location.href = "../index.html"; 
     }
 }
+// প্রোফাইল এডিট করার ফাংশন
+function editProfile() {
+    // আগের নামটা নিচ্ছি
+    const currentName = localStorage.getItem('user_name') || "";
+    
+    // ইউজারের কাছে নতুন নাম চাইছি
+    const newName = prompt("আপনার নাম পরিবর্তন করুন:", currentName);
+
+    // যদি ইউজার কিছু লিখে OK দেয়
+    if (newName && newName.trim() !== "") {
+        localStorage.setItem('user_name', newName); // নতুন নাম সেভ করলাম
+        alert("✅ প্রোফাইল আপডেট হয়েছে! নতুন নাম: " + newName);
+        location.reload(); // পেজ রিলোড দিলাম যাতে নামটা আপডেট হয়
+    }
+}
