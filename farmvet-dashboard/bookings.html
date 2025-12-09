@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>আমার বুকিং</title>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body { font-family: 'Baloo Da 2', sans-serif; background: #f4f7f6; margin: 0; padding: 20px; }
+        .header { display: flex; align-items: center; margin-bottom: 20px; }
+        .back-btn { text-decoration: none; color: white; background: #2575fc; padding: 8px 15px; border-radius: 5px; display: flex; align-items: center; gap: 5px; }
+        .title { flex-grow: 1; text-align: center; color: #333; margin: 0; font-size: 24px; }
+        
+        .booking-card { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 15px; border-left: 5px solid #2575fc; }
+        .doctor-name { font-size: 18px; font-weight: bold; color: #333; }
+        .speciality { color: #666; font-size: 14px; margin-bottom: 5px; }
+        .time-box { background: #eef2ff; padding: 8px; border-radius: 5px; display: flex; align-items: center; gap: 10px; color: #2575fc; font-weight: bold; font-size: 14px; margin-top: 10px; }
+        .status { float: right; font-size: 12px; background: #d4edda; color: #155724; padding: 3px 8px; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="farmvet-dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> ব্যাক</a>
+        <h2 class="title">ডাক্তার বুকিং লিস্ট</h2>
+        <div style="width: 70px;"></div>
+    </div>
+
+    <div class="booking-list">
+        <div class="booking-card">
+            <span class="status">কনফার্ম</span>
+            <div class="doctor-name">ডা. মাশিয়াত তাহসিন</div>
+            <div class="speciality">সার্জারি বিশেষজ্ঞ</div>
+            <div class="time-box">
+                <i class="far fa-clock"></i>
+                কালকে সকাল ১০:০০ টা
+            </div>
+        </div>
+
+        <div class="booking-card">
+            <span class="status" style="background: #fff3cd; color: #856404;">অপেক্ষমান</span>
+            <div class="doctor-name">ডা. মাসুদ রানা</div>
+            <div class="speciality">পোল্ট্রি বিশেষজ্ঞ</div>
+            <div class="time-box">
+                <i class="far fa-clock"></i>
+                ১২ ডিসেম্বর, বিকাল ৪:০০ টা
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
