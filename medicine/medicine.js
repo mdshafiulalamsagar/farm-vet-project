@@ -1,4 +1,4 @@
-const API_URL = "https://farm-vet-project.vercel.app";
+const API_URL = "https://farm-vet-project.vercel.app/medicines";
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchMedicines();
@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function fetchMedicines() {
     const loader = document.getElementById('loaderOverlay');
     try {
-        const response = await fetch(`${API_URL}/medicines`);
+        const response = await fetch(API_URL);
         const data = await response.json();
         renderMedicines(data);
     } catch (error) {
@@ -31,43 +31,34 @@ function renderMedicines(medicines) {
                 </div>
                 <div class="product-action">
                     <div class="price">৳ ${med.price}</div>
-                    <button class="order-button" onclick="placeOrder('${med.name}', ${med.price}, 'medicine')">অর্ডার করুন</button>
+                    <button class="order-button" onclick="addToCart('${med.name}', ${med.price}, 'medicine')">অর্ডার করুন</button>
                 </div>
             </div>
         `;
     });
 }
 
-// --- অর্ডার ফাংশন ---
-async function placeOrder(itemName, price, type) {
-    const userName = localStorage.getItem('user_name');
+// --- কার্টে যোগ করার ফাংশন ---
+function addToCart(name, price, type) {
+    // ১. আগের কার্ট চেক করছি
+    let cart = JSON.parse(localStorage.getItem('my_cart')) || [];
+
+    // ২. নতুন আইটেম বানাচ্ছি
+    const newItem = {
+        name: name,
+        price: price,
+        type: type,
+        quantity: 1
+    };
+
+    // ৩. কার্টে ঢুকাচ্ছি
+    cart.push(newItem);
     
-    if (!userName) {
-        alert("অর্ডার করার জন্য দয়া করে আগে লগইন করুন!");
-        window.location.href = "../index.html";
-        return;
-    }
-
-    if(!confirm(`আপনি কি '${itemName}' অর্ডার করতে চান? দাম: ${price} টাকা।`)) return;
-
-    try {
-        const response = await fetch(`${API_URL}/create-order`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                user_name: userName,
-                item_name: itemName,
-                type: type,
-                price: price
-            })
-        });
-
-        if (response.ok) {
-            alert("✅ অর্ডার সফল হয়েছে! ধন্যবাদ।");
-        } else {
-            alert("❌ সমস্যা হয়েছে। আবার চেষ্টা করুন।");
-        }
-    } catch (error) {
-        alert("ইন্টারনেট কানেকশন চেক করুন।");
+    // ৪. সেভ করছি
+    localStorage.setItem('my_cart', JSON.stringify(cart));
+    
+    // ৫. ইউজারকে জানাচ্ছি
+    if(confirm(`${name} কার্টে যোগ হয়েছে! আপনি কি এখনই কার্টে যেতে চান?`)) {
+        window.location.href = "../cart/cart.html"; // কার্ট পেজে নিয়ে যাবে
     }
 }
