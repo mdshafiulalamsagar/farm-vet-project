@@ -40,6 +40,19 @@
         <div class="dashboard-layout">
           <aside class="sidebar">
             <ul class="nav-list">
+              <li>
+                <a
+                  href="../dashboard/dashboard.html"
+                  style="
+                    background-color: #4caf50;
+                    color: white;
+                    border-radius: 5px;
+                    margin-bottom: 10px;
+                  "
+                >
+                  <i class="fas fa-arrow-left"></i> হোমপেজে ফিরে যান
+                </a>
+              </li>
               <li class="active">
                 <a href="#"><i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড</a>
               </li>
@@ -69,22 +82,38 @@
           </aside>
 
           <section class="content-grid">
-            <div class="status-card card-complete" onclick="window.location.href='orders.html'" style="cursor: pointer;">
+            <div
+              class="status-card card-complete"
+              onclick="window.location.href='orders.html'"
+              style="cursor: pointer"
+            >
               <div class="card-icon" id="total-count">...</div>
               <h3 class="card-title">মোট অর্ডার</h3>
             </div>
 
-            <div class="status-card card-pending" onclick="window.location.href='orders.html'" style="cursor: pointer;">
+            <div
+              class="status-card card-pending"
+              onclick="window.location.href='orders.html'"
+              style="cursor: pointer"
+            >
               <div class="card-icon" id="pending-count">...</div>
               <h3 class="card-title">পেন্ডিং অর্ডার</h3>
             </div>
 
-            <div class="status-card card-cancelled" onclick="window.location.href='orders.html'" style="cursor: pointer;">
+            <div
+              class="status-card card-cancelled"
+              onclick="window.location.href='orders.html'"
+              style="cursor: pointer"
+            >
               <div class="card-icon" id="completed-count">...</div>
               <h3 class="card-title">সম্পন্ন অর্ডার</h3>
             </div>
 
-            <div class="status-card card-doctor" onclick="window.location.href='bookings.html'" style="cursor: pointer;">
+            <div
+              class="status-card card-doctor"
+              onclick="window.location.href='bookings.html'"
+              style="cursor: pointer"
+            >
               <div class="card-icon"><i class="fas fa-calendar-check"></i></div>
               <h3 class="card-title">ডাক্তার বুকিং</h3>
             </div>
