@@ -1,62 +1,183 @@
 <!DOCTYPE html>
 <html lang="bn">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>আপনার কার্ট</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>আমার কার্ট - চেকআউট</title>
     <link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body { font-family: 'Baloo Da 2', sans-serif; background: #f4f7f6; margin: 0; padding: 20px; }
+        .header { display: flex; align-items: center; margin-bottom: 20px; }
+        .back-btn { text-decoration: none; color: white; background: #6a11cb; padding: 8px 15px; border-radius: 5px; display: flex; align-items: center; gap: 5px; }
+        .title { flex-grow: 1; text-align: center; color: #333; margin: 0; font-size: 24px; }
 
-    <link rel="stylesheet" href="cart.css">
+        .cart-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding: 15px 0; }
+        .cart-item:last-child { border-bottom: none; }
+        
+        .item-info { display: flex; align-items: center; gap: 15px; }
+        .item-icon { background: #eef2ff; color: #6a11cb; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; border-radius: 50%; }
+        .item-details h4 { margin: 0; color: #333; font-size: 16px; }
+        .item-details p { margin: 2px 0 0; color: #777; font-size: 13px; }
+        
+        .item-price { font-weight: bold; color: #333; }
+        .remove-btn { color: #ff4d4d; cursor: pointer; margin-left: 15px; }
 
+        /* ইনপুট ফিল্ডের স্টাইল */
+        .input-group { margin-top: 20px; }
+        .input-label { display: block; margin-bottom: 5px; color: #555; font-weight: 500; }
+        .input-field { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-family: inherit; margin-bottom: 15px; box-sizing: border-box; }
+        
+        .total-section { margin-top: 20px; border-top: 2px solid #eee; padding-top: 15px; }
+        .total-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 16px; color: #555; }
+        .grand-total { font-weight: bold; color: #000; font-size: 18px; border-top: 1px dashed #ddd; padding-top: 10px; margin-top: 10px; }
+        
+        .checkout-btn { background: #28a745; color: white; border: none; width: 100%; padding: 12px; border-radius: 5px; font-size: 16px; cursor: pointer; margin-top: 15px; transition: 0.3s; }
+        .checkout-btn:hover { background: #218838; }
+        .empty-msg { text-align: center; color: #777; padding: 20px; }
+    </style>
 </head>
-
 <body>
-    <div class="loader-overlay" id="loaderOverlay">
-        <span class="loading-text">লোড হচ্ছে...</span>
+
+    <div class="header">
+        <a href="../farmvet-dashboard/farmvet-dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> ব্যাক</a>
+        <h2 class="title">আমার কার্ট</h2>
+        <div style="width: 70px;"></div>
     </div>
 
-    <header class="header">
-        <h1 class="logo">ফার্ম ভেট</h1>
-        <div class="search-container">
+    <div class="cart-container" id="cartContainer">
+        <div id="cartItemsList"></div>
+
+        <div class="input-group" id="deliveryForm" style="display:none;">
+            <label class="input-label">ফোন নম্বর:</label>
+            <input type="number" id="phone" class="input-field" placeholder="017xxxxxxxx">
+            
+            <label class="input-label">ডেলিভারি ঠিকানা:</label>
+            <textarea id="address" class="input-field" rows="3" placeholder="গ্রাম, থানা, জেলা..."></textarea>
         </div>
-        <div class="user-icons">
-            <div class="icon-wrapper">
-                <i class="fas fa-home icon" id="home-icon"></i>
+
+        <div class="total-section" id="totalSection" style="display:none;">
+            <div class="total-row grand-total">
+                <span>সর্বমোট বিল</span>
+                <span id="grandTotal">৳ ০</span>
             </div>
-        </div>
-    </header>
-
-    <div class="cart-container">
-        <h1 class="cart-title">আপনার কার্ট</h1>
-
-        <div class="cart-list" id="cartList">
+            <button class="checkout-btn" onclick="confirmOrder()">অর্ডার কনফার্ম করুন</button>
         </div>
 
-        <div class="cart-summary" id="cartSummary" style="display: none;">
-            <div class="cart-total">মোট: <span id="cartTotal">৳ 0</span></div>
-            <button class="checkout-btn">চেকআউট করুন</button>
-        </div>
-
-        <div class="empty-cart-message" id="emptyCartMessage" style="display: none;">
-            আপনার কার্ট খালি।
-        </div>
-
-        <div class="back-btn-container">
-            <button class="back-btn" id="backButton">
-                <i class="fas fa-arrow-left"></i>
-                এক ধাপ পিছনে
-            </button>
-        </div>
+        <div id="emptyCartMsg" class="empty-msg">আপনার কার্ট খালি।</div>
     </div>
 
-    <footer>
-        © ২০২৫ ফার্ম ভেট. সর্বস্বত্ব সংরক্ষিত
-    </footer>
+    <script>
+        // পেজ লোড হলে কার্ট লোড হবে
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCart();
+        });
 
-    <script src="cart.js"></script>
+        function loadCart() {
+            const cart = JSON.parse(localStorage.getItem('my_cart')) || [];
+            const container = document.getElementById('cartItemsList');
+            const emptyMsg = document.getElementById('emptyCartMsg');
+            const deliveryForm = document.getElementById('deliveryForm');
+            const totalSection = document.getElementById('totalSection');
+            
+            container.innerHTML = '';
+            let total = 0;
+
+            if (cart.length === 0) {
+                emptyMsg.style.display = 'block';
+                deliveryForm.style.display = 'none';
+                totalSection.style.display = 'none';
+                return;
+            }
+
+            emptyMsg.style.display = 'none';
+            deliveryForm.style.display = 'block';
+            totalSection.style.display = 'block';
+
+            cart.forEach((item, index) => {
+                total += parseInt(item.price);
+                container.innerHTML += `
+                    <div class="cart-item">
+                        <div class="item-info">
+                            <div class="item-icon">
+                                <i class="fas ${item.type === 'medicine' ? 'fa-pills' : 'fa-user-md'}"></i>
+                            </div>
+                            <div class="item-details">
+                                <h4>${item.name}</h4>
+                                <p>${item.type === 'medicine' ? 'ঔষধ' : 'ডাক্তার অ্যাপয়েন্টমেন্ট'}</p>
+                            </div>
+                        </div>
+                        <div style="display:flex; align-items:center;">
+                            <div class="item-price">৳ ${item.price}</div>
+                            <i class="fas fa-trash-alt remove-btn" onclick="removeFromCart(${index})"></i>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('grandTotal').innerText = '৳ ' + total;
+        }
+
+        function removeFromCart(index) {
+            let cart = JSON.parse(localStorage.getItem('my_cart')) || [];
+            cart.splice(index, 1);
+            localStorage.setItem('my_cart', JSON.stringify(cart));
+            loadCart(); // আবার লোড হবে
+        }
+
+        // --- অর্ডার কনফার্ম ফাংশন ---
+        async function confirmOrder() {
+            const phone = document.getElementById('phone').value;
+            const address = document.getElementById('address').value;
+            const userName = localStorage.getItem('user_name');
+            let cart = JSON.parse(localStorage.getItem('my_cart')) || [];
+
+            // ১. ভ্যালিডেশন
+            if (!phone || !address) {
+                alert("দয়া করে ফোন নম্বর এবং ঠিকানা দিন।");
+                return;
+            }
+            if (!userName) {
+                alert("অর্ডার করার জন্য আবার লগইন করুন।");
+                return;
+            }
+
+            // ২. লোডিং দেখাচ্ছি
+            const btn = document.querySelector('.checkout-btn');
+            btn.innerText = "অর্ডার প্রসেস হচ্ছে...";
+            btn.disabled = true;
+
+            try {
+                // ৩. লুপ চালিয়ে সব আইটেম সার্ভারে পাঠাচ্ছি
+                for (const item of cart) {
+                    await fetch("https://farm-vet-project.vercel.app/create-order", {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            user_name: userName,
+                            item_name: item.name,
+                            type: item.type,
+                            price: item.price,
+                            phone: phone,     // নতুন ফিল্ড
+                            address: address  // নতুন ফিল্ড
+                        })
+                    });
+                }
+
+                // ৪. সাকসেস হলে
+                alert("✅ অভিনন্দন! আপনার অর্ডার সফলভাবে সম্পন্ন হয়েছে।");
+                localStorage.removeItem('my_cart'); // কার্ট খালি করে দিলাম
+                window.location.href = "../farmvet-dashboard/farmvet-dashboard.html"; // ড্যাশবোর্ডে ফেরত
+
+            } catch (error) {
+                console.error(error);
+                alert("❌ সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+                btn.innerText = "অর্ডার কনফার্ম করুন";
+                btn.disabled = false;
+            }
+        }
+    </script>
+
 </body>
-
 </html>
