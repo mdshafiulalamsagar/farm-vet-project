@@ -44,11 +44,14 @@ class UserLogin(BaseModel):
     email: str
     password: str
 
+# UPDATE: ফোন এবং এড্রেস যোগ করা হয়েছে
 class OrderModel(BaseModel):
     user_name: str
     item_name: str
     type: str
     price: int
+    phone: str      # নতুন
+    address: str    # নতুন
 
 # --- API ENDPOINTS ---
 
@@ -113,14 +116,18 @@ def get_medicines():
     finally:
         if conn: conn.close()
 
+# UPDATE: অর্ডার তৈরি করার সময় ফোন ও এড্রেস নেওয়া হচ্ছে
 @app.post("/create-order")
 async def create_order(order: OrderModel):
     conn = None
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        sql = "INSERT INTO orders (user_name, item_name, type, price) VALUES (%s, %s, %s, %s)"
-        val = (order.user_name, order.item_name, order.type, order.price)
+        
+        # SQL Query আপডেট করা হয়েছে
+        sql = "INSERT INTO orders (user_name, item_name, type, price, phone, address) VALUES (%s, %s, %s, %s, %s, %s)"
+        val = (order.user_name, order.item_name, order.type, order.price, order.phone, order.address)
+        
         cursor.execute(sql, val)
         conn.commit()
         return {"message": "Order placed successfully!"}
@@ -146,7 +153,6 @@ def get_user_orders(user_name: str):
     finally:
         if conn: conn.close()
 
-# --- NEW: Dashboard Stats API (সংখ্যা গোনার জন্য) ---
 @app.get("/dashboard-stats")
 def get_dashboard_stats(user_name: str):
     conn = None
