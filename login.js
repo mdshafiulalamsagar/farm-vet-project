@@ -63,7 +63,7 @@ async function handleRegister() {
         const data = await response.json();
 
         if (response.ok) {
-            alert("অ্যাকাউন্ট তৈরি সফল হয়েছে! এখন লগইন করুন।");
+            alert("অ্যাকাউন্ট তৈরি সফল হয়েছে! এখন লগইন করুন।");
             showTab('login'); // Success hole login page e pathay dibo
         } else {
             alert("সমস্যা: " + data.detail); // Kono error hole user k bolbo
@@ -84,7 +84,7 @@ async function handleLogin() {
     const password = document.getElementById('loginPassword').value;
 
     if (!email || !password) {
-        alert("ইমেইল এবং পাসওয়ার্ড দিন!");
+        alert("ইমেইল এবং পাসওয়ার্ড দিন!");
         return;
     }
 
@@ -105,8 +105,9 @@ async function handleLogin() {
         const data = await response.json();
 
         if (response.ok) {
-            // LocalStorage e user er nam rekhe dilam (Future e lagbe)
+            // ✅ এই ২ লাইন খুবই গুরুত্বপূর্ণ (আগে শুধু নাম সেভ হচ্ছিল)
             localStorage.setItem('user_name', data.name);
+            localStorage.setItem('user_id', data.user_id); // এই লাইনটা যোগ করলাম!
             
             alert("স্বাগতম " + data.name + "!");
             // Login success! Dashboard e pathay dicchi
