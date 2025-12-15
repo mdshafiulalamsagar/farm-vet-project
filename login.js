@@ -2,18 +2,15 @@
 window.addEventListener('load', function() {
     const loader = document.getElementById('loaderOverlay');
     if (loader) {
-        // Page load hoye gele loading screen ta soriye dibo
         loader.style.display = 'none';
     }
 });
 
 // --- 2. Tab Change Korar Logic ---
 function showTab(tabName) {
-    // Sob tab er content age hide kore felsi
     document.querySelectorAll('.tab-content').forEach(div => div.classList.remove('active'));
     document.querySelectorAll('.tab-menu div').forEach(div => div.classList.remove('active'));
 
-    // Jei tab e click kora hoise oita active kortesi
     const content = document.getElementById(tabName + 'Content');
     const tab = document.getElementById(tabName + 'Tab');
     
@@ -25,35 +22,38 @@ function showTab(tabName) {
 function togglePassword(inputId, icon) {
     const input = document.getElementById(inputId);
     if (input.type === "password") {
-        input.type = "text"; // Ekhon password dekha jabe
+        input.type = "text"; 
         icon.textContent = "🙈"; 
     } else {
-        input.type = "password"; // Abar lukiye fellam
+        input.type = "password"; 
         icon.textContent = "👁️";
     }
 }
 
 // --- 4. REGISTER FUNCTION (LIVE SERVER) ---
 async function handleRegister() {
-    // Input theke value gula nicchi
     const fullName = document.getElementById('registerName').value;
     const email = document.getElementById('registerEmail').value;
     const password = document.getElementById('registerPassword').value;
 
-    // Keu jodi faka rakhe taile atkabo
     if (!fullName || !email || !password) {
         alert("সব তথ্য পূরণ করুন!");
         return;
     }
 
-    // Button er text change kore "Loading" dekhacci
+    // 🔥 নতুন: ইমেইল ভ্যালিডেশন চেক
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        alert("দয়া করে একটি সঠিক ইমেইল ঠিকানা দিন! (যেমন: example@gmail.com)");
+        return;
+    }
+
     const registerBtn = document.querySelector('.register-btn');
     const originalText = registerBtn.innerText;
     registerBtn.innerText = "অপেক্ষা করুন...";
     registerBtn.disabled = true;
 
     try {
-        // Vercel er live link e data pathacci
         const response = await fetch('https://farm-vet-project.vercel.app/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -64,15 +64,14 @@ async function handleRegister() {
 
         if (response.ok) {
             alert("অ্যাকাউন্ট তৈরি সফল হয়েছে! এখন লগইন করুন।");
-            showTab('login'); // Success hole login page e pathay dibo
+            showTab('login');
         } else {
-            alert("সমস্যা: " + data.detail); // Kono error hole user k bolbo
+            alert("সমস্যা: " + (data.detail || "রেজিস্ট্রেশন ব্যর্থ হয়েছে"));
         }
     } catch (error) {
         console.error('Error:', error);
-        alert("সার্ভারে সমস্যা হচ্ছে। ইন্টারনেট কানেকশন ঠিক আছে তো?");
+        alert("সার্ভারে সমস্যা হচ্ছে। ইন্টারনেট কানেকশন চেক করুন।");
     } finally {
-        // Kaj shesh, button abar ager moto kore dilam
         registerBtn.innerText = originalText;
         registerBtn.disabled = false;
     }
@@ -88,14 +87,12 @@ async function handleLogin() {
         return;
     }
 
-    // Button disable kore dicchi jate 2 bar click na pore
     const loginBtn = document.querySelector('.login-btn');
     const originalText = loginBtn.innerText;
     loginBtn.innerText = "যাচাই করা হচ্ছে...";
     loginBtn.disabled = true;
 
     try {
-        // Vercel er live link e login request pathacci
         const response = await fetch('https://farm-vet-project.vercel.app/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -105,37 +102,32 @@ async function handleLogin() {
         const data = await response.json();
 
         if (response.ok) {
-            // ✅ এই ২ লাইন খুবই গুরুত্বপূর্ণ (আগে শুধু নাম সেভ হচ্ছিল)
+            // ✅ নাম এবং আইডি দুটোই সেভ করছি
             localStorage.setItem('user_name', data.name);
-            localStorage.setItem('user_id', data.user_id); // এই লাইনটা যোগ করলাম!
+            localStorage.setItem('user_id', data.user_id); 
             
             alert("স্বাগতম " + data.name + "!");
-            // Login success! Dashboard e pathay dicchi
             window.location.href = "dashboard/dashboard.html"; 
         } else {
-            alert("লগইন ব্যর্থ: " + data.detail);
+            alert("লগইন ব্যর্থ: " + (data.detail || "ভুল ইমেইল বা পাসওয়ার্ড"));
         }
     } catch (error) {
         console.error('Error:', error);
-        alert("সার্ভারে সমস্যা হচ্ছে। ইন্টারনেট কানেকশন ঠিক আছে তো?");
+        alert("সার্ভারে সমস্যা হচ্ছে।");
     } finally {
-        // Button thik kore dilam
         loginBtn.innerText = originalText;
         loginBtn.disabled = false;
     }
 }
 
-// --- 6. Sob Button r Tab er kaj ekhane set kora ---
+// --- 6. Event Listeners ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Login button click korle ki hobe
     const loginBtn = document.querySelector('.login-btn');
     if(loginBtn) loginBtn.onclick = handleLogin;
 
-    // Register button click korle ki hobe
     const registerBtn = document.querySelector('.register-btn');
     if(registerBtn) registerBtn.onclick = handleRegister;
 
-    // Tab e click korle page change hobe
     const loginTab = document.getElementById('loginTab');
     const registerTab = document.getElementById('registerTab');
     const resetTab = document.getElementById('resetTab');

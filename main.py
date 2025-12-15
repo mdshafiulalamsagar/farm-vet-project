@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr 
 from fastapi.middleware.cors import CORSMiddleware
 import mysql.connector
 from passlib.context import CryptContext
@@ -35,9 +35,11 @@ def get_db_connection():
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 
 # --- Models ---
+
+# আপডেট: ইমেইল ভ্যালিডেশনের জন্য EmailStr ব্যবহার করা হয়েছে
 class UserSignup(BaseModel):
     full_name: str
-    email: str
+    email: EmailStr 
     password: str
 
 class UserLogin(BaseModel):
@@ -52,13 +54,12 @@ class OrderModel(BaseModel):
     phone: str
     address: str
 
-# UPDATE: প্রোফাইল আপডেটের জন্য নতুন মডেল
 class UserProfileUpdate(BaseModel):
     user_id: int
     full_name: str
     phone: str
     address: str
-    new_password: str = None # পাসওয়ার্ড অপশনাল
+    new_password: str = None 
 
 # --- API ENDPOINTS ---
 
@@ -72,6 +73,12 @@ async def register_user(user: UserSignup):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
+        
+        # ডুপ্লিকেট ইমেইল চেক করা (অপশনাল কিন্তু ভালো প্র্যাকটিস)
+        cursor.execute("SELECT * FROM users WHERE email = %s", (user.email,))
+        if cursor.fetchone():
+            raise HTTPException(status_code=400, detail="এই ইমেইল দিয়ে ইতিমধ্যে অ্যাকাউন্ট খোলা আছে।")
+
         hashed_password = pwd_context.hash(user.password)
         cursor.execute("INSERT INTO users (full_name, email, password) VALUES (%s, %s, %s)", (user.full_name, user.email, hashed_password))
         conn.commit()
@@ -97,7 +104,6 @@ async def login_user(user: UserLogin):
     finally:
         if conn: conn.close()
 
-# --- অর্ডার এবং ড্যাশবোর্ড API --- (আগের মতোই)
 @app.get("/doctors")
 def get_doctors():
     conn = None
@@ -174,24 +180,19 @@ def get_dashboard_stats(user_name: str):
     finally:
         if conn: conn.close()
 
-# --- NEW: প্রোফাইল আপডেটের লজিক (পাসওয়ার্ড ফিক্স সহ) ---
 @app.post("/update-profile")
 async def update_profile(data: UserProfileUpdate):
     conn = None
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-
-        # ১. যদি নতুন পাসওয়ার্ড থাকে, তবে সেটা হ্যাশ করবো
         if data.new_password and data.new_password.strip() != "":
             hashed_pw = pwd_context.hash(data.new_password)
             sql = "UPDATE users SET full_name=%s, phone=%s, address=%s, password=%s WHERE id=%s"
             val = (data.full_name, data.phone, data.address, hashed_pw, data.user_id)
         else:
-            # ২. পাসওয়ার্ড না থাকলে শুধু বাকি তথ্য আপডেট করবো
             sql = "UPDATE users SET full_name=%s, phone=%s, address=%s WHERE id=%s"
             val = (data.full_name, data.phone, data.address, data.user_id)
-
         cursor.execute(sql, val)
         conn.commit()
         return {"message": "Profile updated successfully"}
@@ -201,14 +202,12 @@ async def update_profile(data: UserProfileUpdate):
     finally:
         if conn: conn.close()
 
-# --- NEW: ইউজারের তথ্য আনার API (অটো-ফিল করার জন্য) ---
 @app.get("/get-user-profile")
 def get_user_profile(user_id: int):
     conn = None
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        # পাসওয়ার্ড বাদে বাকি সব তথ্য পাঠাবো
         cursor.execute("SELECT full_name, email, phone, address FROM users WHERE id = %s", (user_id,))
         user = cursor.fetchone()
         if not user:
