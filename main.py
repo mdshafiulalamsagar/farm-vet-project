@@ -44,14 +44,21 @@ class UserLogin(BaseModel):
     email: str
     password: str
 
-# UPDATE: ফোন এবং এড্রেস যোগ করা হয়েছে
 class OrderModel(BaseModel):
     user_name: str
     item_name: str
     type: str
     price: int
-    phone: str      # নতুন
-    address: str    # নতুন
+    phone: str
+    address: str
+
+# UPDATE: প্রোফাইল আপডেটের জন্য নতুন মডেল
+class UserProfileUpdate(BaseModel):
+    user_id: int
+    full_name: str
+    phone: str
+    address: str
+    new_password: str = None # পাসওয়ার্ড অপশনাল
 
 # --- API ENDPOINTS ---
 
@@ -90,6 +97,7 @@ async def login_user(user: UserLogin):
     finally:
         if conn: conn.close()
 
+# --- অর্ডার এবং ড্যাশবোর্ড API --- (আগের মতোই)
 @app.get("/doctors")
 def get_doctors():
     conn = None
@@ -116,18 +124,14 @@ def get_medicines():
     finally:
         if conn: conn.close()
 
-# UPDATE: অর্ডার তৈরি করার সময় ফোন ও এড্রেস নেওয়া হচ্ছে
 @app.post("/create-order")
 async def create_order(order: OrderModel):
     conn = None
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        
-        # SQL Query আপডেট করা হয়েছে
         sql = "INSERT INTO orders (user_name, item_name, type, price, phone, address) VALUES (%s, %s, %s, %s, %s, %s)"
         val = (order.user_name, order.item_name, order.type, order.price, order.phone, order.address)
-        
         cursor.execute(sql, val)
         conn.commit()
         return {"message": "Order placed successfully!"}
@@ -148,7 +152,6 @@ def get_user_orders(user_name: str):
         orders = cursor.fetchall()
         return orders
     except Exception as e:
-        print(f"Error fetching user orders: {e}")
         raise HTTPException(status_code=500, detail="Error fetching orders")
     finally:
         if conn: conn.close()
@@ -159,27 +162,59 @@ def get_dashboard_stats(user_name: str):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-
-        # ১. মোট অর্ডার
         cursor.execute("SELECT COUNT(*) FROM orders WHERE user_name = %s", (user_name,))
-        total_orders = cursor.fetchone()[0]
-
-        # ২. পেন্ডিং অর্ডার
+        total = cursor.fetchone()[0]
         cursor.execute("SELECT COUNT(*) FROM orders WHERE user_name = %s AND status = 'Pending'", (user_name,))
-        pending_orders = cursor.fetchone()[0]
-
-        # ৩. সম্পন্ন অর্ডার
+        pending = cursor.fetchone()[0]
         cursor.execute("SELECT COUNT(*) FROM orders WHERE user_name = %s AND status = 'Completed'", (user_name,))
-        completed_orders = cursor.fetchone()[0]
-
-        return {
-            "total": total_orders,
-            "pending": pending_orders,
-            "completed": completed_orders
-        }
-
-    except Exception as e:
-        print(f"Error stats: {e}")
+        completed = cursor.fetchone()[0]
+        return {"total": total, "pending": pending, "completed": completed}
+    except Exception:
         return {"total": 0, "pending": 0, "completed": 0}
+    finally:
+        if conn: conn.close()
+
+# --- NEW: প্রোফাইল আপডেটের লজিক (পাসওয়ার্ড ফিক্স সহ) ---
+@app.post("/update-profile")
+async def update_profile(data: UserProfileUpdate):
+    conn = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # ১. যদি নতুন পাসওয়ার্ড থাকে, তবে সেটা হ্যাশ করবো
+        if data.new_password and data.new_password.strip() != "":
+            hashed_pw = pwd_context.hash(data.new_password)
+            sql = "UPDATE users SET full_name=%s, phone=%s, address=%s, password=%s WHERE id=%s"
+            val = (data.full_name, data.phone, data.address, hashed_pw, data.user_id)
+        else:
+            # ২. পাসওয়ার্ড না থাকলে শুধু বাকি তথ্য আপডেট করবো
+            sql = "UPDATE users SET full_name=%s, phone=%s, address=%s WHERE id=%s"
+            val = (data.full_name, data.phone, data.address, data.user_id)
+
+        cursor.execute(sql, val)
+        conn.commit()
+        return {"message": "Profile updated successfully"}
+    except Exception as e:
+        print(f"Update Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if conn: conn.close()
+
+# --- NEW: ইউজারের তথ্য আনার API (অটো-ফিল করার জন্য) ---
+@app.get("/get-user-profile")
+def get_user_profile(user_id: int):
+    conn = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        # পাসওয়ার্ড বাদে বাকি সব তথ্য পাঠাবো
+        cursor.execute("SELECT full_name, email, phone, address FROM users WHERE id = %s", (user_id,))
+        user = cursor.fetchone()
+        if not user:
+             raise HTTPException(status_code=404, detail="User not found")
+        return user
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
         if conn: conn.close()
