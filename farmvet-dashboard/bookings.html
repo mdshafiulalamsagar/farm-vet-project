@@ -16,7 +16,10 @@
         .doctor-name { font-size: 18px; font-weight: bold; color: #333; }
         .speciality { color: #666; font-size: 14px; margin-bottom: 5px; }
         .time-box { background: #eef2ff; padding: 8px; border-radius: 5px; display: flex; align-items: center; gap: 10px; color: #2575fc; font-weight: bold; font-size: 14px; margin-top: 10px; }
-        .status { float: right; font-size: 12px; background: #d4edda; color: #155724; padding: 3px 8px; border-radius: 10px; }
+        .status { float: right; font-size: 12px; padding: 3px 8px; border-radius: 10px; }
+        .pending { background: #fff3cd; color: #856404; }
+        .success { background: #d4edda; color: #155724; }
+        .loading { text-align: center; margin-top: 50px; color: #666; }
     </style>
 </head>
 <body>
@@ -27,27 +30,11 @@
         <div style="width: 70px;"></div>
     </div>
 
-    <div class="booking-list">
-        <div class="booking-card">
-            <span class="status">কনফার্ম</span>
-            <div class="doctor-name">ডা. মাশিয়াত তাহসিন</div>
-            <div class="speciality">সার্জারি বিশেষজ্ঞ</div>
-            <div class="time-box">
-                <i class="far fa-clock"></i>
-                কালকে সকাল ১০:০০ টা
-            </div>
-        </div>
-
-        <div class="booking-card">
-            <span class="status" style="background: #fff3cd; color: #856404;">অপেক্ষমান</span>
-            <div class="doctor-name">ডা. মাসুদ রানা</div>
-            <div class="speciality">পোল্ট্রি বিশেষজ্ঞ</div>
-            <div class="time-box">
-                <i class="far fa-clock"></i>
-                ১২ ডিসেম্বর, বিকাল ৪:০০ টা
-            </div>
-        </div>
+    <div class="booking-list" id="bookingList">
+        <div class="loading">বুকিং লোড হচ্ছে...</div>
     </div>
+
+    <script src="bookings.js"></script>
 
 </body>
 </html>
