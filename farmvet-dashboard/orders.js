@@ -8,19 +8,28 @@ async function fetchMyOrders() {
     const userName = localStorage.getItem('user_name');
     const container = document.getElementById('orderList');
 
-    // ১. লগইন করা না থাকলে সরাবো
     if (!userName) {
         container.innerHTML = `<p style="text-align:center; color:red;">দয়া করে আগে লগইন করুন।</p>`;
         return;
     }
 
-    try {
-        // ২. ইউজারের নাম দিয়ে ডাটাবেস থেকে অর্ডার আনছি
-        // URL-এ নাম পাঠাচ্ছি: /my-orders?user_name=Sagar
-        const response = await fetch(`${API_URL}/my-orders?user_name=${encodeURIComponent(userName)}`);
-        const orders = await response.json();
+    // ১. URL থেকে ফিল্টার চেক করা (যেমন: ?filter=Pending)
+    const urlParams = new URLSearchParams(window.location.search);
+    const filterStatus = urlParams.get('filter');
 
-        // ৩. অর্ডার লিস্ট রেন্ডার করা
+    // টাইটেল আপডেট করা (অপশনাল, সুন্দর দেখানোর জন্য)
+    if(filterStatus === 'Pending') document.querySelector('.title').innerText = "পেন্ডিং অর্ডার সমূহ";
+    if(filterStatus === 'Completed') document.querySelector('.title').innerText = "সম্পন্ন অর্ডার সমূহ";
+
+    try {
+        const response = await fetch(`${API_URL}/my-orders?user_name=${encodeURIComponent(userName)}`);
+        let orders = await response.json();
+
+        // ২. যদি ফিল্টার থাকে, তবে সেই অনুযায়ী ডাটা ছাঁটাই করবো
+        if (filterStatus) {
+            orders = orders.filter(order => order.status === filterStatus);
+        }
+
         renderOrders(orders);
 
     } catch (error) {
@@ -31,21 +40,18 @@ async function fetchMyOrders() {
 
 function renderOrders(orders) {
     const container = document.getElementById('orderList');
-    container.innerHTML = ''; // লোডিং লেখা সরালাম
+    container.innerHTML = ''; 
 
-    // যদি কোনো অর্ডার না থাকে
     if (orders.length === 0) {
-        container.innerHTML = `<p style="text-align:center; margin-top:50px;">আপনি এখনো কোনো অর্ডার করেননি।</p>`;
+        container.innerHTML = `<p style="text-align:center; margin-top:50px; color:#777;">এই তালিকায় কোনো অর্ডার নেই।</p>`;
         return;
     }
 
-    // অর্ডার কার্ড তৈরি
     orders.forEach(order => {
-        // তারিখ ফরম্যাট করা (একটু সুন্দর দেখানোর জন্য)
         const dateObj = new Date(order.order_date);
         const dateStr = dateObj.toLocaleDateString('bn-BD'); 
 
-        // স্ট্যাটাস কালার ঠিক করা
+        // স্ট্যাটাস কালার সেটআপ
         const statusClass = order.status === 'Pending' ? 'pending' : 'success';
         const statusText = order.status === 'Pending' ? 'পেন্ডিং' : 'সম্পন্ন';
 
