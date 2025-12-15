@@ -1,26 +1,41 @@
+// পেজ লোড হলে ইউজারের নাম অটোমেটিক বসাবে
+document.addEventListener('DOMContentLoaded', function() {
+    const savedName = localStorage.getItem('user_name');
+    if(savedName) {
+        document.getElementById('name').value = savedName;
+    }
+});
+
 document.getElementById('profileUpdateForm').addEventListener('submit', function (event) {
     event.preventDefault();
 
-    // ডেটা সংগ্রহের প্রয়োজন নেই, শুধুমাত্র নিশ্চিত করতে হবে যে বর্তমান পাসওয়ার্ড পূরণ করা হয়েছে
+    const name = document.getElementById('name').value;
+    const phone = document.getElementById('phone').value;
     const currentPassword = document.getElementById('current-password').value;
 
+    // ভ্যালিডেশন
     if (currentPassword.trim() === "") {
         alert("প্রোফাইল আপডেট করার জন্য বর্তমান পাসওয়ার্ড প্রয়োজন।");
         return;
     }
 
-    // পাসওয়ার্ড ফিল্ডগুলো খালি করে দেওয়া হলো
+    // নাম আপডেট হলে লোকাল স্টোরেজেও আপডেট করছি
+    if(name) {
+        localStorage.setItem('user_name', name);
+    }
+
+    // ফিল্ড ক্লিয়ার
     document.getElementById('new-password').value = '';
     document.getElementById('current-password').value = '';
 
-    // আপডেট সফল হওয়ার পর অ্যালার্ট দেখাবে
-    alert("আপনার প্রোফাইলটি সফলভাবে আপডেট করা হয়েছে।");
+    // সাকসেস মেসেজ
+    alert("✅ আপনার প্রোফাইল সফলভাবে আপডেট করা হয়েছে।");
 
-    // ওকে (OK) বাটনে ক্লিক করার পর ব্যবহারকারীকে হোমপেজে (dashboard.html) নিয়ে যাবে
-    window.location.href = "../dashboard/dashboard.html";
+    // ড্যাশবোর্ডে ফেরত পাঠানো
+    window.location.href = "../farmvet-dashboard/farmvet-dashboard.html";
 });
 
+// ব্যাক বাটন লজিক
 document.getElementById('backToHomeButton').addEventListener('click', function () {
-    // হোমপেজে ফিরে যেতে
-    window.location.href = "../dashboard/dashboard.html";
+    window.location.href = "../farmvet-dashboard/farmvet-dashboard.html";
 });
