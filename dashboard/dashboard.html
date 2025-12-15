@@ -23,8 +23,9 @@
         <header class="top-bar">
             <h1 class="logo">ফার্ম ভেট</h1>
             <div class="header-icons" style="display: flex; align-items: center;">
-                <i class="fas fa-shopping-cart cart-icon" id="cart-icon"> <span>0</span> </i>
-                <i class="fas fa-user-circle profile-icon" id="profile-icon"></i> 
+                <i class="fas fa-shopping-cart cart-icon" id="cart-icon" onclick="window.location.href='../cart/cart.html'" style="cursor: pointer;"> <span>0</span> </i>
+                
+                <i class="fas fa-user-circle profile-icon" id="profile-icon" onclick="window.location.href='../profile/profile.html'" style="cursor: pointer;"></i> 
                 
                 <button onclick="handleLogout()" style="margin-left: 15px; background-color: #ff4757; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-family: 'Baloo Da 2', cursive; cursor: pointer; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
                     <i class="fas fa-sign-out-alt"></i> লগআউট
@@ -41,15 +42,15 @@
             </section>
 
             <section class="services-section">
-                <div class="service-card" id="medicine-card">
+                <div class="service-card" id="medicine-card" onclick="window.location.href='../medicine/medicine.html'" style="cursor: pointer;">
                     <div class="service-icon"><i class="fas fa-pills"></i></div>
                     <p class="service-name">ঔষধ</p>
                 </div>
-                <div class="service-card" id="doctor-card">
+                <div class="service-card" id="doctor-card" onclick="window.location.href='../doctor/doctors.html'" style="cursor: pointer;">
                     <div class="service-icon"><i class="fas fa-stethoscope"></i></div>
                     <p class="service-name">ডাক্তার</p>
                 </div>
-                <div class="service-card" id="dashboard-card">
+                <div class="service-card" id="dashboard-card" onclick="window.location.href='../farmvet-dashboard/farmvet-dashboard.html'" style="cursor: pointer;">
                     <div class="service-icon"><i class="fas fa-tachometer-alt"></i></div>
                     <p class="service-name">ড্যাশবোর্ড</p>
                 </div>
@@ -58,48 +59,52 @@
             <section class="listings-section">
                 <div class="listing-block doctor-listing">
                     <h2>টপ রেটেড ডাক্তার</h2>
+                    
                     <div class="list-item">
                         <div class="item-details">
                             <p class="item-name">ডা. মাশিয়াত তাহসিন</p>
                             <p class="item-info">পশু চিকিৎসক, সার্জারি পশু বিশেষজ্ঞ</p>
                         </div>
                         <div class="item-action">
-                            <span class="price">৳ 500</span>
-                            <button class="btn btn-secondary">বুক করুন</button>
+                            <span class="price">৳ ৫০০</span>
+                            <button class="btn btn-secondary" onclick="addToCart('ডা. মাশিয়াত তাহসিন', 500, 'doctor')">বুক করুন</button>
                         </div>
                     </div>
+
                     <div class="list-item">
                         <div class="item-details">
                             <p class="item-name">ডা. ইমন আহমেদ নয়ন</p>
                             <p class="item-info">পোল্ট্রি ও ডেইরি বিশেষজ্ঞ</p>
                         </div>
                         <div class="item-action">
-                            <span class="price">৳ 800</span>
-                            <button class="btn btn-secondary">বুক করুন</button>
+                            <span class="price">৳ ৮০০</span>
+                            <button class="btn btn-secondary" onclick="addToCart('ডা. ইমন আহমেদ নয়ন', 800, 'doctor')">বুক করুন</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="listing-block medicine-listing">
                     <h2>বেস্ট সেলিং ঔষধ</h2>
+                    
                     <div class="list-item">
                         <div class="item-details">
                             <p class="item-name">অমিলিটেট ২০%</p>
                             <p class="item-info">ডোজ: ৫ মিলি</p>
                         </div>
                         <div class="item-action">
-                            <span class="price">৳ 180</span>
-                            <button class="btn btn-tertiary">অর্ডার করুন</button>
+                            <span class="price">৳ ১৮০</span>
+                            <button class="btn btn-tertiary" onclick="addToCart('অমিলিটেট ২০%', 180, 'medicine')">অর্ডার করুন</button>
                         </div>
                     </div>
+
                     <div class="list-item">
                         <div class="item-details">
                             <p class="item-name">ট্যাবলেট ৫০</p>
                             <p class="item-info">ডোজ: ৫টি ট্যাবলেট</p>
                         </div>
                         <div class="item-action">
-                            <span class="price">৳ 250</span>
-                            <button class="btn btn-tertiary">অর্ডার করুন</button>
+                            <span class="price">৳ ২৫০</span>
+                            <button class="btn btn-tertiary" onclick="addToCart('ট্যাবলেট ৫০', 250, 'medicine')">অর্ডার করুন</button>
                         </div>
                     </div>
                 </div>
@@ -115,8 +120,18 @@
 
     <script>
         function handleLogout() {
-            window.location.href = '../index.html';
+            if(confirm("আপনি কি নিশ্চিত লগআউট করতে চান?")) {
+                localStorage.clear(); // সব ডাটা ক্লিয়ার করে দিলাম
+                window.location.href = '../index.html';
+            }
         }
+        
+        // পেজ লোড হলে কার্ট কাউন্ট আপডেট করার ছোট স্ক্রিপ্ট
+        document.addEventListener('DOMContentLoaded', () => {
+            const cart = JSON.parse(localStorage.getItem('my_cart')) || [];
+            const countSpan = document.querySelector('#cart-icon span');
+            if(countSpan) countSpan.innerText = cart.length;
+        });
     </script>
 </body>
 </html>

@@ -137,3 +137,28 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+// --- নতুন: কার্টে যোগ করার ফাংশন ---
+function addToCart(name, price, type) {
+    // ১. আগের কার্ট চেক করছি
+    let cart = JSON.parse(localStorage.getItem('my_cart')) || [];
+
+    // ২. নতুন আইটেম বানাচ্ছি
+    const newItem = {
+        name: name,
+        price: price,
+        type: type, // 'doctor' অথবা 'medicine'
+        quantity: 1
+    };
+
+    // ৩. কার্টে ঢুকাচ্ছি
+    cart.push(newItem);
+    
+    // ৪. সেভ করছি
+    localStorage.setItem('my_cart', JSON.stringify(cart));
+    
+    // ৫. ইউজারকে জানাচ্ছি
+    if(confirm(`${name} কার্টে যোগ হয়েছে! আপনি কি চেকআউট করতে কার্ট পেজে যেতে চান?`)) {
+        // কার্ট পেজের লোকেশন (ফোল্ডার অনুযায়ী পাথ ঠিক করা হলো)
+        window.location.href = "../cart/cart.html"; 
+    }
+}
