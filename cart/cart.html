@@ -24,7 +24,6 @@
         .item-price { font-weight: bold; color: #333; }
         .remove-btn { color: #ff4d4d; cursor: pointer; margin-left: 15px; }
 
-        /* ইনপুট ফিল্ডের স্টাইল */
         .input-group { margin-top: 20px; }
         .input-label { display: block; margin-bottom: 5px; color: #555; font-weight: 500; }
         .input-field { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-family: inherit; margin-bottom: 15px; box-sizing: border-box; }
@@ -51,10 +50,10 @@
 
         <div class="input-group" id="deliveryForm" style="display:none;">
             <label class="input-label">ফোন নম্বর:</label>
-            <input type="number" id="phone" class="input-field" placeholder="017xxxxxxxx">
+            <input type="text" id="phone" class="input-field" placeholder="লোডিং...">
             
             <label class="input-label">ডেলিভারি ঠিকানা:</label>
-            <textarea id="address" class="input-field" rows="3" placeholder="গ্রাম, থানা, জেলা..."></textarea>
+            <textarea id="address" class="input-field" rows="3" placeholder="লোডিং..."></textarea>
         </div>
 
         <div class="total-section" id="totalSection" style="display:none;">
@@ -69,11 +68,15 @@
     </div>
 
     <script>
-        // পেজ লোড হলে কার্ট লোড হবে
+        const API_URL = "https://farm-vet-project.vercel.app";
+
         document.addEventListener('DOMContentLoaded', () => {
             loadCart();
+            // পেজ লোড হলেই ইউজার ডাটা আনবে
+            prefetchUserData();
         });
 
+        // --- ১. কার্ট লোড করার ফাংশন ---
         function loadCart() {
             const cart = JSON.parse(localStorage.getItem('my_cart')) || [];
             const container = document.getElementById('cartItemsList');
@@ -123,17 +126,38 @@
             let cart = JSON.parse(localStorage.getItem('my_cart')) || [];
             cart.splice(index, 1);
             localStorage.setItem('my_cart', JSON.stringify(cart));
-            loadCart(); // আবার লোড হবে
+            loadCart();
         }
 
-        // --- অর্ডার কনফার্ম ফাংশন ---
+        // --- ২. ডাটাবেস থেকে ফোন ও ঠিকানা আনার ফাংশন ---
+        async function prefetchUserData() {
+            const userId = localStorage.getItem('user_id');
+            if(!userId) return;
+
+            try {
+                const response = await fetch(`${API_URL}/get-user-profile?user_id=${userId}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    // যদি ডাটাবেসে তথ্য থাকে, তাহলে ইনপুটে বসিয়ে দিবো
+                    if(data.phone) document.getElementById('phone').value = data.phone;
+                    else document.getElementById('phone').placeholder = "আপনার ফোন নম্বর দিন";
+
+                    if(data.address) document.getElementById('address').value = data.address;
+                    else document.getElementById('address').placeholder = "আপনার ঠিকানা দিন";
+                }
+            } catch (error) {
+                console.error("User data fetch error:", error);
+            }
+        }
+
+        // --- ৩. অর্ডার কনফার্ম ফাংশন ---
         async function confirmOrder() {
             const phone = document.getElementById('phone').value;
             const address = document.getElementById('address').value;
             const userName = localStorage.getItem('user_name');
             let cart = JSON.parse(localStorage.getItem('my_cart')) || [];
 
-            // ১. ভ্যালিডেশন
             if (!phone || !address) {
                 alert("দয়া করে ফোন নম্বর এবং ঠিকানা দিন।");
                 return;
@@ -143,15 +167,13 @@
                 return;
             }
 
-            // ২. লোডিং দেখাচ্ছি
             const btn = document.querySelector('.checkout-btn');
             btn.innerText = "অর্ডার প্রসেস হচ্ছে...";
             btn.disabled = true;
 
             try {
-                // ৩. লুপ চালিয়ে সব আইটেম সার্ভারে পাঠাচ্ছি
                 for (const item of cart) {
-                    await fetch("https://farm-vet-project.vercel.app/create-order", {
+                    await fetch(`${API_URL}/create-order`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -159,16 +181,15 @@
                             item_name: item.name,
                             type: item.type,
                             price: item.price,
-                            phone: phone,     // নতুন ফিল্ড
-                            address: address  // নতুন ফিল্ড
+                            phone: phone,     // ইনপুট থেকে নেওয়া ফোন (এডিট করা বা ডিফল্ট)
+                            address: address  // ইনপুট থেকে নেওয়া ঠিকানা
                         })
                     });
                 }
 
-                // ৪. সাকসেস হলে
                 alert("✅ অভিনন্দন! আপনার অর্ডার সফলভাবে সম্পন্ন হয়েছে।");
-                localStorage.removeItem('my_cart'); // কার্ট খালি করে দিলাম
-                window.location.href = "../farmvet-dashboard/farmvet-dashboard.html"; // ড্যাশবোর্ডে ফেরত
+                localStorage.removeItem('my_cart'); 
+                window.location.href = "../farmvet-dashboard/farmvet-dashboard.html";
 
             } catch (error) {
                 console.error(error);
