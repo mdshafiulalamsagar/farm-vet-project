@@ -1,4 +1,4 @@
-const API_URL = "https://farm-vet-project.vercel.app"; // মেইন লিংক
+const API_URL = "https://farm-vet-project.vercel.app/doctors";
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchDoctors();
@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function fetchDoctors() {
     const loader = document.getElementById('loaderOverlay');
     try {
-        const response = await fetch(`${API_URL}/doctors`);
+        const response = await fetch(API_URL);
         const data = await response.json();
         renderDoctors(data);
     } catch (error) {
@@ -32,46 +32,28 @@ function renderDoctors(doctors) {
                 </div>
                 <div class="appointment-details">
                     <p class="fee">৳ ${doc.fee}</p>
-                    <button class="book-button" onclick="placeOrder('${doc.name}', ${doc.fee}, 'doctor')">বুক করুন</button>
+                    <button class="book-button" onclick="addToCart('${doc.name}', ${doc.fee}, 'doctor')">বুক করুন</button>
                 </div>
             </div>
         `;
     });
 }
 
-// --- অর্ডার ফাংশন ---
-async function placeOrder(itemName, price, type) {
-    const userName = localStorage.getItem('user_name');
+// --- কার্টে যোগ করার ফাংশন ---
+function addToCart(name, price, type) {
+    let cart = JSON.parse(localStorage.getItem('my_cart')) || [];
+
+    const newItem = {
+        name: name,
+        price: price,
+        type: type, // 'doctor' টাইপ হিসেবে সেভ হবে
+        quantity: 1
+    };
+
+    cart.push(newItem);
+    localStorage.setItem('my_cart', JSON.stringify(cart));
     
-    // ১. লগইন করা না থাকলে আটকাবে
-    if (!userName) {
-        alert("বুকিং করার জন্য দয়া করে আগে লগইন করুন!");
-        window.location.href = "../index.html"; 
-        return;
-    }
-
-    // ২. কনফার্মেশন চাইবে
-    if(!confirm(`আপনি কি '${itemName}' বুক করতে চান? ফি: ${price} টাকা।`)) return;
-
-    // ৩. সার্ভারে রিকোয়েস্ট পাঠাবে
-    try {
-        const response = await fetch(`${API_URL}/create-order`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                user_name: userName,
-                item_name: itemName,
-                type: type,
-                price: price
-            })
-        });
-
-        if (response.ok) {
-            alert("✅ বুকিং সফল হয়েছে! আমাদের প্রতিনিধি শীঘ্রই কল করবেন।");
-        } else {
-            alert("❌ সমস্যা হয়েছে। আবার চেষ্টা করুন।");
-        }
-    } catch (error) {
-        alert("ইন্টারনেট কানেকশন চেক করুন।");
+    if(confirm(`${name}-এর অ্যাপয়েন্টমেন্ট কার্টে যোগ হয়েছে! আপনি কি কনফার্ম করতে কার্টে যেতে চান?`)) {
+        window.location.href = "../cart/cart.html";
     }
 }
