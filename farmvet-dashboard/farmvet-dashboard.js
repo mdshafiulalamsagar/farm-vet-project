@@ -54,7 +54,7 @@ function handleLoader() {
     }, 1000); // ১ সেকেন্ড লোডিং
 }
 
-// ৫. হোম আইকন সেটআপ
+// ৫. হোম আইকন সেটআপ (আপডেটেড)
 function setupHomeIcon() {
     const homeIcon = document.getElementById('home-icon');
     const loaderOverlay = document.getElementById('loaderOverlay');
@@ -62,13 +62,16 @@ function setupHomeIcon() {
     if (homeIcon) {
         homeIcon.addEventListener('click', function (e) {
             e.preventDefault();
+            
+            // লোডার দেখানো (সুন্দর ট্রানজিশনের জন্য)
             if (loaderOverlay) {
                 loaderOverlay.style.display = 'flex';
                 loaderOverlay.style.opacity = '1';
             }
+
             setTimeout(() => {
-                // ড্যাশবোর্ড রিলোড বা মেইন ইনডেক্সে যাওয়া
-                window.location.href = "farmvet-dashboard.html"; 
+                // আগে এটা ভুল ছিল, এখন ঠিক করে দিয়েছি:
+                window.location.href = "../dashboard/dashboard.html"; 
             }, 300);
         });
     }
@@ -79,18 +82,7 @@ function handleLogout() {
     if (confirm("আপনি কি নিশ্চিত লগআউট করতে চান?")) {
         localStorage.removeItem('user_name');
         localStorage.removeItem('user_id');
+        localStorage.removeItem('my_cart'); // লগআউট করলে কার্ট ক্লিয়ার করা ভালো
         window.location.href = "../index.html"; 
-    }
-}
-
-// ৭. প্রোফাইল এডিট ফাংশন
-function editProfile() {
-    const currentName = localStorage.getItem('user_name') || "";
-    const newName = prompt("আপনার নাম পরিবর্তন করুন:", currentName);
-
-    if (newName && newName.trim() !== "") {
-        localStorage.setItem('user_name', newName);
-        alert("✅ প্রোফাইল আপডেট হয়েছে! নতুন নাম: " + newName);
-        location.reload();
     }
 }
