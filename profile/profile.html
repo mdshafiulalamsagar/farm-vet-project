@@ -36,22 +36,21 @@
             </div>
 
             <div class="form-group">
-                <label for="email">ইমেইল:</label>
-                <input type="email" id="email" name="email" placeholder="আপনার ইমেইল ঠিকানা" required>
+                <label for="address">ঠিকানা:</label>
+                <input type="text" id="address" name="address" placeholder="আপনার বর্তমান ঠিকানা" required>
             </div>
 
             <div class="form-group">
-                <label for="current-password">বর্তমান পাসওয়ার্ড:</label>
-                <input type="password" id="current-password" name="current-password"
-                    placeholder="নিশ্চিত করতে বর্তমান পাসওয়ার্ড দিন" required>
+                <label for="email">ইমেইল (পরিবর্তনযোগ্য নয়):</label>
+                <input type="email" id="email" name="email" disabled style="background:#e9ecef; cursor:not-allowed;">
             </div>
 
             <div class="form-group">
-                <label for="new-password">নতুন পাসওয়ার্ড:</label>
-                <input type="password" id="new-password" name="new-password" placeholder="নতুন পাসওয়ার্ড (যদি পরিবর্তন করতে চান)">
+                <label for="new-password">নতুন পাসওয়ার্ড (যদি পরিবর্তন করতে চান):</label>
+                <input type="password" id="new-password" name="new-password" placeholder="নতুন পাসওয়ার্ড দিন">
             </div>
 
-            <button type="submit" class="update-button">আপডেট করুন</button>
+            <button type="submit" class="update-button">তথ্য আপডেট করুন</button>
         </form>
     </div>
 
