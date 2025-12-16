@@ -217,3 +217,61 @@ def get_user_profile(user_id: int):
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         if conn: conn.close()
+
+# --- ADMIN PANEL APIs (শুধুমাত্র অ্যাডমিনের জন্য) ---
+
+# ১. সব অর্ডার দেখার API (অ্যাডমিন চেক করে)
+@app.get("/admin/orders")
+def get_all_orders(user_id: int):
+    conn = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # আগে চেক করি ইউজার আসলেই অ্যাডমিন কি না
+        cursor.execute("SELECT role FROM users WHERE id = %s", (user_id,))
+        user = cursor.fetchone()
+
+        # যদি ইউজার না থাকে অথবা রোল admin না হয়
+        if not user or user['role'] != 'admin':
+            raise HTTPException(status_code=403, detail="অ্যাক্সেস ডিনাইড! আপনি অ্যাডমিন নন।")
+
+        # অ্যাডমিন হলে সব অর্ডার দেখাবো (নতুন গুলো আগে)
+        cursor.execute("SELECT * FROM orders ORDER BY order_date DESC")
+        orders = cursor.fetchall()
+        return orders
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if conn: conn.close()
+
+# ২. অর্ডারের স্ট্যাটাস আপডেট করার API
+class OrderStatusUpdate(BaseModel):
+    order_id: int
+    new_status: str
+    admin_id: int
+
+@app.post("/admin/update-order")
+def update_order_status(data: OrderStatusUpdate):
+    conn = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # অ্যাডমিন চেক
+        cursor.execute("SELECT role FROM users WHERE id = %s", (data.admin_id,))
+        user = cursor.fetchone()
+
+        if not user or user['role'] != 'admin':
+            raise HTTPException(status_code=403, detail="শুধুমাত্র অ্যাডমিন স্ট্যাটাস চেঞ্জ করতে পারে।")
+
+        # স্ট্যাটাস আপডেট করা
+        cursor.execute("UPDATE orders SET status = %s WHERE id = %s", (data.new_status, data.order_id))
+        conn.commit()
+        return {"message": "অর্ডার স্ট্যাটাস আপডেট হয়েছে!"}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if conn: conn.close()
