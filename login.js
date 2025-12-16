@@ -41,7 +41,7 @@ async function handleRegister() {
         return;
     }
 
-    // ফ্রন্টএন্ড ভ্যালিডেশন
+    // ইমেইল ভ্যালিডেশন
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
         alert("দয়া করে একটি সঠিক ইমেইল ঠিকানা দিন! (যেমন: example@gmail.com)");
@@ -66,15 +66,12 @@ async function handleRegister() {
             alert("অ্যাকাউন্ট তৈরি সফল হয়েছে! এখন লগইন করুন।");
             showTab('login');
         } else {
-            // 🔥 ফিক্সড: এরর মেসেজ হ্যান্ডলিং
+            // এরর হ্যান্ডলিং
             let errorMsg = "রেজিস্ট্রেশন ব্যর্থ হয়েছে";
-            
             if (data.detail) {
                 if (typeof data.detail === 'string') {
-                    // যদি সাধারণ টেক্সট এরর হয়
                     errorMsg = data.detail;
                 } else if (Array.isArray(data.detail)) {
-                    // যদি Pydantic এরর লিস্ট পাঠায় (যেমন ইমেইল ভুল)
                     errorMsg = "তথ্য সঠিক নয়: " + data.detail[0].msg;
                 }
             }
@@ -82,7 +79,7 @@ async function handleRegister() {
         }
     } catch (error) {
         console.error('Error:', error);
-        alert("সার্ভারে সমস্যা হচ্ছে। ইন্টারনেট কানেকশন চেক করুন।");
+        alert("সার্ভারে সমস্যা হচ্ছে।");
     } finally {
         registerBtn.innerText = originalText;
         registerBtn.disabled = false;
@@ -114,8 +111,10 @@ async function handleLogin() {
         const data = await response.json();
 
         if (response.ok) {
+            // ✅ আপডেট: Role সহ সব সেভ করছি
             localStorage.setItem('user_name', data.name);
             localStorage.setItem('user_id', data.user_id); 
+            localStorage.setItem('user_role', data.role); // 🔥 এই লাইনটা নতুন
             
             alert("স্বাগতম " + data.name + "!");
             window.location.href = "dashboard/dashboard.html"; 
