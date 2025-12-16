@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, EmailStr 
+from pydantic import BaseModel, EmailStr
 from fastapi.middleware.cors import CORSMiddleware
 import mysql.connector
 from passlib.context import CryptContext
@@ -35,11 +35,9 @@ def get_db_connection():
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 
 # --- Models ---
-
-# আপডেট: ইমেইল ভ্যালিডেশনের জন্য EmailStr ব্যবহার করা হয়েছে
 class UserSignup(BaseModel):
     full_name: str
-    email: EmailStr 
+    email: EmailStr
     password: str
 
 class UserLogin(BaseModel):
@@ -61,6 +59,12 @@ class UserProfileUpdate(BaseModel):
     address: str
     new_password: str = None 
 
+# অ্যাডমিন প্যানেলের জন্য নতুন মডেল
+class OrderStatusUpdate(BaseModel):
+    order_id: int
+    new_status: str
+    admin_id: int
+
 # --- API ENDPOINTS ---
 
 @app.get("/")
@@ -74,12 +78,13 @@ async def register_user(user: UserSignup):
         conn = get_db_connection()
         cursor = conn.cursor()
         
-        # ডুপ্লিকেট ইমেইল চেক করা (অপশনাল কিন্তু ভালো প্র্যাকটিস)
+        # ডুপ্লিকেট ইমেইল চেক
         cursor.execute("SELECT * FROM users WHERE email = %s", (user.email,))
         if cursor.fetchone():
             raise HTTPException(status_code=400, detail="এই ইমেইল দিয়ে ইতিমধ্যে অ্যাকাউন্ট খোলা আছে।")
 
         hashed_password = pwd_context.hash(user.password)
+        # বাই ডিফল্ট role = 'user' থাকবে (SQL টেবিলে সেট করা আছে)
         cursor.execute("INSERT INTO users (full_name, email, password) VALUES (%s, %s, %s)", (user.full_name, user.email, hashed_password))
         conn.commit()
         return {"message": "Account created successfully!"}
@@ -96,9 +101,17 @@ async def login_user(user: UserLogin):
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT * FROM users WHERE email = %s", (user.email,))
         result = cursor.fetchone()
+        
         if not result or not pwd_context.verify(user.password, result['password']):
             raise HTTPException(status_code=400, detail="Invalid email or password")
-        return {"message": "Login successful", "user_id": result['id'], "name": result['full_name']}
+            
+        # 🔥 আপডেট: লগইন করলে এখন Role-ও রিটার্ন করবে
+        return {
+            "message": "Login successful", 
+            "user_id": result['id'], 
+            "name": result['full_name'],
+            "role": result['role'] 
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     finally:
@@ -232,7 +245,6 @@ def get_all_orders(user_id: int):
         cursor.execute("SELECT role FROM users WHERE id = %s", (user_id,))
         user = cursor.fetchone()
 
-        # যদি ইউজার না থাকে অথবা রোল admin না হয়
         if not user or user['role'] != 'admin':
             raise HTTPException(status_code=403, detail="অ্যাক্সেস ডিনাইড! আপনি অ্যাডমিন নন।")
 
@@ -247,11 +259,6 @@ def get_all_orders(user_id: int):
         if conn: conn.close()
 
 # ২. অর্ডারের স্ট্যাটাস আপডেট করার API
-class OrderStatusUpdate(BaseModel):
-    order_id: int
-    new_status: str
-    admin_id: int
-
 @app.post("/admin/update-order")
 def update_order_status(data: OrderStatusUpdate):
     conn = None
